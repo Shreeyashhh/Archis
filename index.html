@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary Meta Tags -->
+  <title>PCMC Washing Center | Bike & Car Wash in Ravet, Pune</title>
+  <meta name="title" content="PCMC Washing Center | Bike & Car Wash in Ravet, Pune">
+  <meta name="description" content="PCMC Washing Center offers professional bike and car washing services in Ravet, Pune, with easy WhatsApp slot booking. Foam wash, detailing & interior care.">
+  <meta name="keywords" content="car wash Ravet, bike wash Ravet, car washing Pune, bike washing Pune, vehicle washing Ravet, PCMC washing center, foam wash Pune, vehicle detailing Ravet">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="PCMC Washing Center | Premium Automobile Detailing in Ravet">
+  <meta property="og:description" content="Fast, reliable and affordable vehicle washing services in Ravet, Pune. Book your washing slot directly on WhatsApp!">
+  <meta property="og:image" content="logo.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- External Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ==========================================================================
+       Navigation Bar
+       ========================================================================== -->
+  <header class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="#hero" class="nav-brand" aria-label="PCMC Washing Center Home">
+        <img src="logo.png" alt="PCMC Washing Center Logo" class="brand-logo-img">
+        <div class="brand-text">
+          <span class="brand-title">PCMC <span class="brand-accent">WASHING</span><span class="brand-red">.</span></span>
+          <span class="brand-subtitle">CENTER</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Menu -->
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="#hero" class="nav-link active">Home</a></li>
+        <li><a href="#services" class="nav-link">Services</a></li>
+        <li><a href="#pricing" class="nav-link">Pricing</a></li>
+        <li><a href="#why-us" class="nav-link">Why Us</a></li>
+        <li><a href="#location" class="nav-link">Location</a></li>
+        <li class="btn-nav-mobile">
+          <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking()" aria-label="Book Slot via WhatsApp">
+            <i data-lucide="calendar"></i> Book Slot
+          </button>
+        </li>
+      </ul>
+
+      <!-- Desktop Action CTA -->
+      <div class="nav-actions">
+        <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking()" aria-label="Book Slot via WhatsApp">
+          <i data-lucide="calendar"></i> Book Slot
+        </button>
+      </div>
+
+      <!-- Mobile Hamburger Toggle -->
+      <button class="hamburger" id="hamburger" aria-label="Toggle Navigation Menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Menu Backdrop Overlay -->
+  <div class="nav-overlay" id="nav-overlay"></div>
+
+  <!-- ==========================================================================
+       Hero Section
+       ========================================================================== -->
+  <section class="hero" id="hero">
+    <div class="container hero-content">
+      <h1 class="hero-title reveal">PCMC Washing Center</h1>
+      <h2 class="hero-subheading reveal">Professional Bike & Car Washing in Ravet, Pune</h2>
+
+      <p class="hero-description reveal">
+        Fast, reliable and affordable vehicle washing services to keep your ride looking its best.
+      </p>
+
+      <div class="hero-cta-group reveal">
+        <button class="btn btn-primary" onclick="openWhatsAppBooking()" aria-label="Book Your Slot">
+          <i data-lucide="calendar"></i> Book Your Slot
+        </button>
+        <a href="#services" class="btn btn-secondary">
+          <i data-lucide="arrow-down-circle"></i> View Services
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       Our Services Section (3 Initial Cards + Explore More)
+       ========================================================================== -->
+  <section class="section" id="services">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag"><i data-lucide="sparkles"></i> Our Services</span>
+        <h2 class="section-title">Professional Washing Packages</h2>
+        <p class="section-subtitle">Tailored foam washing, cleaning, and detailing solutions for two-wheelers and four-wheelers.</p>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="services-tabs reveal">
+        <button class="tab-btn active" data-tab="all"><i data-lucide="grid"></i> All Services</button>
+        <button class="tab-btn" data-tab="bike"><i data-lucide="bike"></i> Bike Care</button>
+        <button class="tab-btn" data-tab="car"><i data-lucide="car"></i> Car Detailing</button>
+      </div>
+
+      <!-- Services Grid (3 Primary + Hidden Extra Cards) -->
+      <div class="services-grid">
+
+        <!-- --- 3 PRIMARY FEATURED CARDS (VISIBLE BY DEFAULT) --- -->
+        
+        <!-- 1. Bike Full Wash -->
+        <div class="service-card highlight-card reveal" data-category="bike">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="bike"></i></div>
+            <span class="service-category-badge">Bike</span>
+          </div>
+          <h3 class="service-name">Bike Full Wash</h3>
+          <p class="service-desc">Complete high-pressure water wash covering wheels, mudguards, engine area, and outer body for a sparkling finish.</p>
+          <div class="service-footer">
+            <div class="service-price">₹80 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Bike Full Wash')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- 2. Car Foam Wash -->
+        <div class="service-card reveal" data-category="car">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="droplet"></i></div>
+            <span class="service-category-badge">Car</span>
+          </div>
+          <h3 class="service-name">Car Foam Wash</h3>
+          <p class="service-desc">Thick snow foam bath that softens road grime and dirt, followed by microfiber hand wash and drying.</p>
+          <div class="service-footer">
+            <div class="service-price">₹300 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Car Foam Wash')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- 3. Complete Car Detailing -->
+        <div class="service-card reveal" data-category="car">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="star"></i></div>
+            <span class="service-category-badge">Car</span>
+          </div>
+          <h3 class="service-name">Complete Car Detailing</h3>
+          <p class="service-desc">Comprehensive interior deep shampooing, full exterior machine buffing polish, engine bay wash, and rim glaze.</p>
+          <div class="service-footer">
+            <div class="service-price">₹2,000 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Complete Car Detailing')">Book Now</button>
+          </div>
+        </div>
+
+
+        <!-- --- REMAINING SERVICE CARDS (EXPANDABLE) --- -->
+
+        <!-- Bike Foam Wash -->
+        <div class="service-card service-card-more" data-category="bike">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="droplets"></i></div>
+            <span class="service-category-badge">Bike</span>
+          </div>
+          <h3 class="service-name">Bike Foam Wash</h3>
+          <p class="service-desc">Rich snow foam application to safely lift dirt and road oils without scratching paintwork.</p>
+          <div class="service-footer">
+            <div class="service-price">₹100 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Bike Foam Wash')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Bike Premium Wash -->
+        <div class="service-card service-card-more" data-category="bike">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="shield-check"></i></div>
+            <span class="service-category-badge">Bike</span>
+          </div>
+          <h3 class="service-name">Bike Premium Wash</h3>
+          <p class="service-desc">Foam wash combined with deep wheel rim cleaning, seat care, and gloss protective spray.</p>
+          <div class="service-footer">
+            <div class="service-price">₹150 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Bike Premium Wash')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Bike Chain Cleaning -->
+        <div class="service-card service-card-more" data-category="bike">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="settings"></i></div>
+            <span class="service-category-badge">Bike</span>
+          </div>
+          <h3 class="service-name">Bike Chain Cleaning</h3>
+          <p class="service-desc">Degreasing and thorough brush cleaning of drive chain and sprockets to eliminate heavy sludge.</p>
+          <div class="service-footer">
+            <div class="service-price">₹80 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Bike Chain Cleaning')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Bike Chain Lubrication -->
+        <div class="service-card service-card-more" data-category="bike">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="zap"></i></div>
+            <span class="service-category-badge">Bike</span>
+          </div>
+          <h3 class="service-name">Bike Chain Cleaning + Lubrication</h3>
+          <p class="service-desc">Full chain degreasing followed by high-grade synthetic chain lube application for smooth gear shifting.</p>
+          <div class="service-footer">
+            <div class="service-price">₹120 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Bike Chain Cleaning + Lubrication')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Bike Interior/Panel Cleaning -->
+        <div class="service-card service-card-more" data-category="bike">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="sparkle"></i></div>
+            <span class="service-category-badge">Bike</span>
+          </div>
+          <h3 class="service-name">Bike Interior/Panel Cleaning</h3>
+          <p class="service-desc">Detailed hand cleaning of fairings, instrument cluster, switches, and under-seat compartment.</p>
+          <div class="service-footer">
+            <div class="service-price">₹150 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Bike Interior/Panel Cleaning')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Bike Polish -->
+        <div class="service-card service-card-more" data-category="bike">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="sun"></i></div>
+            <span class="service-category-badge">Bike</span>
+          </div>
+          <h3 class="service-name">Bike Polish</h3>
+          <p class="service-desc">High-shine body polish for painted panels and chrome components to protect against UV fading.</p>
+          <div class="service-footer">
+            <div class="service-price">₹150 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Bike Polish')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Bike Complete Detailing -->
+        <div class="service-card service-card-more" data-category="bike">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="award"></i></div>
+            <span class="service-category-badge">Bike</span>
+          </div>
+          <h3 class="service-name">Bike Complete Detailing</h3>
+          <p class="service-desc">Ultimate motorcycle package: Foam wash, chain clean & lube, panel restoration, and premium polish.</p>
+          <div class="service-footer">
+            <div class="service-price">₹300 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Bike Complete Detailing')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Car Exterior Wash -->
+        <div class="service-card service-card-more" data-category="car">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="car"></i></div>
+            <span class="service-category-badge">Car</span>
+          </div>
+          <h3 class="service-name">Car Exterior Wash</h3>
+          <p class="service-desc">High-pressure exterior wash including body panels, glass windows, side mirrors, and wheel arches.</p>
+          <div class="service-footer">
+            <div class="service-price">₹250 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Car Exterior Wash')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Car Full Wash -->
+        <div class="service-card service-card-more" data-category="car">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="shield"></i></div>
+            <span class="service-category-badge">Car</span>
+          </div>
+          <h3 class="service-name">Car Full Wash</h3>
+          <p class="service-desc">Complete exterior foam wash, underbody pressure blast, foot mat washing, and interior dusting.</p>
+          <div class="service-footer">
+            <div class="service-price">₹400 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Car Full Wash')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Car Interior Cleaning -->
+        <div class="service-card service-card-more" data-category="car">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="armchair"></i></div>
+            <span class="service-category-badge">Car</span>
+          </div>
+          <h3 class="service-name">Car Interior Cleaning</h3>
+          <p class="service-desc">Thorough seat cleaning, carpet vacuuming, door trim wipe down, and window glass streak-free cleaning.</p>
+          <div class="service-footer">
+            <div class="service-price">₹350 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Car Interior Cleaning')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Car Vacuum Cleaning -->
+        <div class="service-card service-card-more" data-category="car">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="wind"></i></div>
+            <span class="service-category-badge">Car</span>
+          </div>
+          <h3 class="service-name">Car Vacuum Cleaning</h3>
+          <p class="service-desc">Powerful deep vacuuming of cabin floor, seats, boot compartment, AC vent surrounds, and matting.</p>
+          <div class="service-footer">
+            <div class="service-price">₹200 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Car Vacuum Cleaning')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Dashboard Cleaning -->
+        <div class="service-card service-card-more" data-category="car">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="gauge"></i></div>
+            <span class="service-category-badge">Car</span>
+          </div>
+          <h3 class="service-name">Dashboard Cleaning</h3>
+          <p class="service-desc">Precision dusting and UV-protective dressing application on dashboard, steering wheel, and console panel.</p>
+          <div class="service-footer">
+            <div class="service-price">₹150 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Dashboard Cleaning')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Tyre Cleaning & Dressing -->
+        <div class="service-card service-card-more" data-category="car">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="circle-dot"></i></div>
+            <span class="service-category-badge">Car</span>
+          </div>
+          <h3 class="service-name">Tyre Cleaning & Dressing</h3>
+          <p class="service-desc">Deep rim degreasing, brake dust removal, and rich black tyre shine coating for protection.</p>
+          <div class="service-footer">
+            <div class="service-price">₹150 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Tyre Cleaning & Dressing')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Car Polish -->
+        <div class="service-card service-card-more" data-category="car">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="sparkles"></i></div>
+            <span class="service-category-badge">Car</span>
+          </div>
+          <h3 class="service-name">Car Polish</h3>
+          <p class="service-desc">Machine paint polishing to remove light swirls, enhance paint depth, and restore original factory shine.</p>
+          <div class="service-footer">
+            <div class="service-price">₹700 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Car Polish')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Car Wax -->
+        <div class="service-card service-card-more" data-category="car">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="flame"></i></div>
+            <span class="service-category-badge">Car</span>
+          </div>
+          <h3 class="service-name">Car Wax</h3>
+          <p class="service-desc">Application of protective carnauba/synthetic wax layer for hydrophobic water beading and glossy finish.</p>
+          <div class="service-footer">
+            <div class="service-price">₹600 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Car Wax')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Interior Detailing -->
+        <div class="service-card service-card-more" data-category="car">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="airvent"></i></div>
+            <span class="service-category-badge">Car</span>
+          </div>
+          <h3 class="service-name">Interior Detailing</h3>
+          <p class="service-desc">Deep foam shampooing of seats, roof liner stain removal, leather conditioning, and interior sanitization.</p>
+          <div class="service-footer">
+            <div class="service-price">₹1,000 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Interior Detailing')">Book Now</button>
+          </div>
+        </div>
+
+        <!-- Exterior Detailing -->
+        <div class="service-card service-card-more" data-category="car">
+          <div class="service-header">
+            <div class="service-icon"><i data-lucide="layers"></i></div>
+            <span class="service-category-badge">Car</span>
+          </div>
+          <h3 class="service-name">Exterior Detailing</h3>
+          <p class="service-desc">Multi-stage paint correction, clay bar treatment, iron decontamination, glass polish, and seal coating.</p>
+          <div class="service-footer">
+            <div class="service-price">₹1,200 <span>starting</span></div>
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking('Exterior Detailing')">Book Now</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Explore More Services Button -->
+      <div class="explore-services-wrapper reveal">
+        <button id="explore-services-btn" class="btn btn-secondary">
+          <i data-lucide="grid"></i> Explore More Services (<span id="hidden-count">17</span>)
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       Pricing & Service Menu Section
+       ========================================================================== -->
+  <section class="section pricing-section" id="pricing">
+    <div class="container">
+      <div class="section-header reveal">
+       
+        <h2 class="section-title">Pricing Menu</h2>
+        <p class="section-subtitle">No hidden charges. Professional care at prices that fit every budget.</p>
+      </div>
+
+      <!-- Starting Price Highlight Banner -->
+      <div class="starting-price-banner reveal">
+        <div class="starting-banner-content">
+          <div class="starting-banner-icon">
+            <i data-lucide="sparkles"></i>
+          </div>
+          <div>
+            <h3 class="starting-banner-title">Unbeatable Starting Rates</h3>
+            <p class="starting-banner-subtitle">Get your bike washed with top quality pressure water & cleaning solution.</p>
+          </div>
+        </div>
+        <div class="starting-banner-price">
+          Bike Wash @ ₹80
+        </div>
+      </div>
+
+      <!-- Side-by-Side Pricing Tables Grid -->
+      <div class="pricing-tables-wrapper">
+
+        <!-- Bike Pricing Table -->
+        <div class="pricing-table-card reveal">
+          <div class="pricing-table-header">
+            <i data-lucide="bike"></i>
+            <h3>Bike Washing & Detailing Rates</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="pricing-table">
+              <thead>
+                <tr>
+                  <th>Service Description</th>
+                  <th style="text-align: right;">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="highlight-row">
+                  <td><strong>Bike Full Wash</strong> (Featured Start Price)</td>
+                  <td class="price-col">₹80</td>
+                </tr>
+                <tr>
+                  <td>Bike Foam Wash</td>
+                  <td class="price-col">₹100</td>
+                </tr>
+                <tr>
+                  <td>Bike Premium Wash</td>
+                  <td class="price-col">₹150</td>
+                </tr>
+                <tr>
+                  <td>Chain Cleaning</td>
+                  <td class="price-col">₹80</td>
+                </tr>
+                <tr>
+                  <td>Chain Cleaning + Lubrication</td>
+                  <td class="price-col">₹120</td>
+                </tr>
+                <tr>
+                  <td>Bike Polish</td>
+                  <td class="price-col">₹150</td>
+                </tr>
+                <tr>
+                  <td>Bike Complete Cleaning</td>
+                  <td class="price-col">₹200</td>
+                </tr>
+                <tr>
+                  <td>Bike Detailing</td>
+                  <td class="price-col">₹300</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Car Pricing Table -->
+        <div class="pricing-table-card reveal">
+          <div class="pricing-table-header">
+            <i data-lucide="car"></i>
+            <h3>Car Washing & Detailing Rates</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="pricing-table">
+              <thead>
+                <tr>
+                  <th>Service Description</th>
+                  <th style="text-align: right;">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Car Exterior Wash</td>
+                  <td class="price-col">₹250</td>
+                </tr>
+                <tr>
+                  <td>Car Foam Wash</td>
+                  <td class="price-col">₹300</td>
+                </tr>
+                <tr>
+                  <td>Car Full Wash</td>
+                  <td class="price-col">₹400</td>
+                </tr>
+                <tr>
+                  <td>Car Interior Cleaning</td>
+                  <td class="price-col">₹350</td>
+                </tr>
+                <tr>
+                  <td>Car Vacuum Cleaning</td>
+                  <td class="price-col">₹200</td>
+                </tr>
+                <tr>
+                  <td>Dashboard Cleaning</td>
+                  <td class="price-col">₹150</td>
+                </tr>
+                <tr>
+                  <td>Tyre Cleaning & Dressing</td>
+                  <td class="price-col">₹150</td>
+                </tr>
+                <tr>
+                  <td>Car Polish</td>
+                  <td class="price-col">₹700</td>
+                </tr>
+                <tr>
+                  <td>Car Wax</td>
+                  <td class="price-col">₹600</td>
+                </tr>
+                <tr>
+                  <td>Interior Detailing</td>
+                  <td class="price-col">₹1,000</td>
+                </tr>
+                <tr>
+                  <td>Exterior Detailing</td>
+                  <td class="price-col">₹1,200</td>
+                </tr>
+                <tr>
+                  <td>Complete Car Detailing</td>
+                  <td class="price-col">₹2,000</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Pricing Disclaimer -->
+      <p class="pricing-disclaimer reveal">
+        <i data-lucide="info" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle;"></i>
+        <strong>Note:</strong> Prices may vary depending on vehicle size, condition and additional requirements. Please confirm the final price while booking.
+      </p>
+
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       Why Choose Us Section
+       ========================================================================== -->
+  <section class="section" id="why-us">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag"><i data-lucide="check-circle"></i> Why Choose Us</span>
+        <h2 class="section-title">The PCMC Advantage</h2>
+        <p class="section-subtitle">We combine professional expertise, modern wash equipment, and prompt customer care.</p>
+      </div>
+
+      <div class="benefits-grid">
+
+        <div class="benefit-card reveal">
+          <div class="benefit-icon">
+            <i data-lucide="shield-check"></i>
+          </div>
+          <h3 class="benefit-title">Professional Cleaning</h3>
+          <p class="benefit-desc">Careful washing and cleaning for your vehicle using microfiber cloths and safe pressure washers.</p>
+        </div>
+
+        <div class="benefit-card red-accent reveal">
+          <div class="benefit-icon">
+            <i data-lucide="banknote"></i>
+          </div>
+          <h3 class="benefit-title">Affordable Pricing</h3>
+          <p class="benefit-desc">Services starting from just <strong>₹80 for bike full wash</strong> with zero compromise on quality.</p>
+        </div>
+
+        <div class="benefit-card reveal">
+          <div class="benefit-icon">
+            <i data-lucide="smartphone"></i>
+          </div>
+          <h3 class="benefit-title">Easy Booking</h3>
+          <p class="benefit-desc">Book your slot directly through WhatsApp without long queue waiting times.</p>
+        </div>
+
+        <div class="benefit-card reveal">
+          <div class="benefit-icon">
+            <i data-lucide="map-pin"></i>
+          </div>
+          <h3 class="benefit-title">Convenient Location</h3>
+          <p class="benefit-desc">Prime accessible location in <strong>Ravet, Pune</strong> for easy drop-off and quick service turnaround.</p>
+        </div>
+
+        <div class="benefit-card red-accent reveal">
+          <div class="benefit-icon">
+            <i data-lucide="thumbs-up"></i>
+          </div>
+          <h3 class="benefit-title">Quality Service</h3>
+          <p class="benefit-desc">Dedicated focus on clean finishing, hydrophobic shine, and complete customer satisfaction.</p>
+        </div>
+
+        <div class="benefit-card reveal">
+          <div class="benefit-icon">
+            <i data-lucide="car-front"></i>
+          </div>
+          <h3 class="benefit-title">Bike & Car Care</h3>
+          <p class="benefit-desc">Tailored wash packages available for both two-wheelers and four-wheelers of all models.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       Booking CTA Section
+       ========================================================================== -->
+  <section class="section booking-cta-section" id="booking-cta">
+    <div class="container">
+      <div class="booking-cta-box reveal">
+        <h2 class="booking-cta-title">Ready to Give Your Ride a Fresh Look?</h2>
+        <p class="booking-cta-desc">Book your washing slot directly on WhatsApp. Quick response. Easy booking.</p>
+        <button class="btn btn-primary" onclick="openWhatsAppBooking()" aria-label="Book Your Slot on WhatsApp">
+          <i data-lucide="calendar" style="width: 20px; height: 20px;"></i> Book Your Slot on WhatsApp
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       Location & Google Maps Section
+       ========================================================================== -->
+  <section class="section location-section" id="location">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-tag red-tag"><i data-lucide="navigation"></i> Location</span>
+        <h2 class="section-title">Visit PCMC Washing Center</h2>
+        <p class="section-subtitle">Drop by our center in Ravet or navigate using Google Maps.</p>
+      </div>
+
+      <div class="location-grid">
+        <div class="location-info-card reveal">
+          <h3>PCMC Washing Center</h3>
+          <p style="color: var(--text-secondary); margin-top: 0.25rem;">Professional Automobile Detailing & Cleaning</p>
+
+          <ul class="location-details-list">
+            <li class="location-detail-item">
+              <div class="location-icon-box">
+                <i data-lucide="map-pin"></i>
+              </div>
+              <div class="location-detail-text">
+                <h4>Address</h4>
+                <p>Ravet, Pune, Maharashtra</p>
+              </div>
+            </li>
+
+            <li class="location-detail-item">
+              <div class="location-icon-box">
+                <i data-lucide="phone"></i>
+              </div>
+              <div class="location-detail-text">
+                <h4>WhatsApp / Booking Contact</h4>
+                <p>+91 95940 54099</p>
+              </div>
+            </li>
+
+            <li class="location-detail-item">
+              <div class="location-icon-box">
+                <i data-lucide="clock"></i>
+              </div>
+              <div class="location-detail-text">
+                <h4>Operating Hours</h4>
+                <p>Mon - Sun: 8:00 AM - 8:00 PM</p>
+              </div>
+            </li>
+          </ul>
+
+          <a href="https://www.google.com/maps/search/?api=1&query=PCMC+Washing+Center,+Ravet,+Pune" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="width: 100%;">
+            <i data-lucide="navigation-2"></i> Get Directions
+          </a>
+        </div>
+
+        <!-- Google Maps Embed -->
+        <div class="map-container reveal">
+          <iframe 
+            title="PCMC Washing Center Ravet Pune Location Map"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3780.093414983995!2d73.7431215!3d18.6620584!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2b9e663a89ab5%3A0x8e8ebaa2cb1d3184!2sRavet%2C%20Pimpri-Chinchwad%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       Footer Section
+       ========================================================================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        
+        <div class="footer-brand">
+          <a href="#hero" class="nav-brand">
+            <img src="logo.png" alt="PCMC Washing Center" class="brand-logo-img">
+            <div class="brand-text">
+              <span class="brand-title">PCMC <span class="brand-accent">WASHING</span></span>
+              <span class="brand-subtitle">CENTER</span>
+            </div>
+          </a>
+          <p>Professional Vehicle Washing & Care. Quality motorcycle and car wash services delivering a clean shine every single time.</p>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#pricing">Pricing Menu</a></li>
+            <li><a href="#why-us">Why Choose Us</a></li>
+            <li><a href="#location">Location</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Services</h4>
+          <ul class="footer-links">
+            <li><a href="#services">Bike Full Wash (₹80)</a></li>
+            <li><a href="#services">Bike Chain Lube</a></li>
+            <li><a href="#services">Car Foam Wash</a></li>
+            <li><a href="#services">Interior Detailing</a></li>
+            <li><a href="#services">Complete Car Detailing</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Contact Us</h4>
+          <div class="footer-contact-item">
+            <i data-lucide="map-pin" style="width: 18px; height: 18px; color: var(--accent-blue);"></i>
+            <span>Ravet, Pune, Maharashtra</span>
+          </div>
+          <div class="footer-contact-item">
+            <i data-lucide="phone" style="width: 18px; height: 18px; color: var(--accent-blue);"></i>
+            <span>+91 95940 54099</span>
+          </div>
+          <div style="margin-top: 1rem;">
+            <button class="btn btn-primary btn-sm" onclick="openWhatsAppBooking()">
+              <i data-lucide="calendar"></i> Book Slot
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 PCMC Washing Center. All Rights Reserved.</p>
+        <div class="footer-watermark">
+          Designed by <a href="https://veenly.netlify.app" target="_blank" rel="noopener noreferrer" class="veenly-link">VEENLY Studios</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       Floating WhatsApp Action Button
+       ========================================================================== -->
+  <div class="whatsapp-float">
+    <span class="whatsapp-tooltip">Book a Slot</span>
+    <button class="whatsapp-btn" onclick="openWhatsAppBooking()" aria-label="Book a Slot on WhatsApp">
+      <i data-lucide="message-circle" style="width: 32px; height: 32px;"></i>
+    </button>
+  </div>
+
+  <!-- Initialize Lucide Icons -->
+  <script>
+    lucide.createIcons();
+  </script>
+
+  <!-- External Script -->
+  <script src="script.js"></script>
+</body>
+</html>
