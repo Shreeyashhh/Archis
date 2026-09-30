@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary Meta Tags & SEO Optimization -->
+  <title>Doorstep Vehicle Pickup & Drop Car Wash Ravet PCMC Pune</title>
+  <meta name="title" content="Doorstep Vehicle Pickup & Drop Car Wash Ravet PCMC Pune">
+  <meta name="description" content="Request doorstep vehicle pickup & drop-off washing service at PCMC Washing Centre in Ravet, PCMC, Pune. Book car & bike washing slot online and confirm via WhatsApp.">
+  <meta name="keywords" content="pickup drop car wash ravet, doorstep bike wash pcmc, vehicle wash pickup pune, washing center in pcmc, car wash near me ravet, washing center near me">
+  <meta name="robots" content="index, follow">
+
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Schema.org JSON-LD LocalBusiness Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "AutoRepair",
+    "name": "PCMC Washing Centre - Doorstep Pickup & Drop",
+    "image": "pickup_hero.jpg",
+    "url": "https://maps.app.goo.gl/UFgvBUuA8TSH2HsUA",
+    "telephone": "+919594054099",
+    "priceRange": "₹60 - ₹700",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Ravet",
+      "addressLocality": "PCMC, Pune",
+      "addressRegion": "Maharashtra",
+      "postalCode": "411044",
+      "addressCountry": "IN"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand" aria-label="PCMC Washing Centre Home">
+        <img src="logo.png" alt="PCMC Washing Centre Logo" class="brand-logo-img">
+        <div class="brand-text">
+          <span class="brand-title">PCMC <span class="brand-accent">WASHING</span><span class="brand-red">.</span></span>
+          <span class="brand-subtitle">CENTRE</span>
+        </div>
+      </a>
+
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="car-wash.html" class="nav-link">Car Wash</a></li>
+        <li><a href="bike-wash.html" class="nav-link">Bike Wash</a></li>
+        <li><a href="other-vehicles.html" class="nav-link">Other Vehicles</a></li>
+        <li><a href="pickup-drop.html" class="nav-link active">Pickup & Drop</a></li>
+        <li><a href="index.html#location" class="nav-link">Location</a></li>
+        <li class="btn-nav-mobile">
+          
+        </li>
+      </ul>
+
+      <!-- Desktop Action CTA at right-most corner -->
+      <div class="nav-actions">
+        <a href="pickup-drop.html" class="btn btn-primary btn-sm">
+          <i data-lucide="calendar"></i> Book a Wash
+        </a>
+      </div>
+
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle Navigation Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+  <div class="nav-overlay" id="nav-overlay"></div>
+
+  <!-- Page Hero -->
+  <section class="page-hero" style="background-image: linear-gradient(180deg, rgba(6, 8, 14, 0.75) 0%, rgba(6, 8, 14, 0.95) 100%), url('pickup_hero.jpg');">
+    <div class="container page-hero-content reveal">
+     
+      <h1 class="page-hero-title">Your Ride, Picked Up. Cleaned. Delivered.</h1>
+      <p class="page-hero-desc">
+        Request a pickup and drop for your vehicle. Share your details and preferred schedule, and contact us on WhatsApp to confirm.
+      </p>
+    </div>
+  </section>
+
+  <!-- Interactive Form Section -->
+  <section class="section">
+    <div class="container">
+      <div class="booking-page-grid">
+        
+        <!-- Booking Form Container -->
+        <div class="form-card reveal">
+          <form id="pickup-drop-form" novalidate>
+            
+            <!-- 1. Customer Details -->
+            <div class="form-section-header">
+              <i data-lucide="user-check"></i>
+              <h3>1. Customer Details</h3>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group form-grid-full">
+                <label class="form-label" for="customerName">Full Name <span class="required-asterisk">*</span></label>
+                <input type="text" id="customerName" class="form-control" placeholder="e.g. Rahul Sharma" required>
+                <span class="form-error-msg">Full Name is required.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="customerMobile">Mobile Number <span class="required-asterisk">*</span></label>
+                <input type="tel" id="customerMobile" class="form-control" placeholder="10-digit mobile number" maxlength="10" required>
+                <span class="form-error-msg">Enter valid 10-digit Indian mobile number.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="customerWa">WhatsApp Number</label>
+                <input type="tel" id="customerWa" class="form-control" placeholder="WhatsApp number" maxlength="10">
+                <label class="checkbox-group">
+                  <input type="checkbox" id="sameAsMobile"> Same as mobile number
+                </label>
+              </div>
+            </div>
+
+            <!-- 2. Vehicle Details -->
+            <div class="form-section-header" style="margin-top: 2rem;">
+              <i data-lucide="car"></i>
+              <h3>2. Vehicle Details</h3>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="vehicleCategory">Vehicle Category <span class="required-asterisk">*</span></label>
+                <select id="vehicleCategory" class="form-control" required>
+                  <option value="">-- Select Category --</option>
+                  <option value="car">Car</option>
+                  <option value="bike">Bike</option>
+                  <option value="rickshaw">Rickshaw</option>
+                  <option value="tractor">Tractor</option>
+                </select>
+                <span class="form-error-msg">Vehicle Category is required.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="vehicleType">Vehicle Type <span class="required-asterisk">*</span></label>
+                <select id="vehicleType" class="form-control" required>
+                  <option value="">-- Select Category First --</option>
+                </select>
+                <span class="form-error-msg">Vehicle Type is required.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="vehicleModel">Vehicle Model (Optional)</label>
+                <input type="text" id="vehicleModel" class="form-control" placeholder="e.g. Swift / Royal Enfield Classic">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="vehicleReg">Registration Number (Optional)</label>
+                <input type="text" id="vehicleReg" class="form-control" placeholder="e.g. MH 14 AB 1234">
+              </div>
+            </div>
+
+            <!-- 3. Service Details -->
+            <div class="form-section-header" style="margin-top: 2rem;">
+              <i data-lucide="sparkles"></i>
+              <h3>3. Service Details</h3>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="serviceSelect">Select Service <span class="required-asterisk">*</span></label>
+                <select id="serviceSelect" class="form-control" required>
+                  <option value="">-- Select Vehicle Type First --</option>
+                </select>
+                <span class="form-error-msg">Service selection is required.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="servicePrice">Listed Price (₹)</label>
+                <input type="text" id="servicePrice" class="form-control" placeholder="Auto populated" readonly style="background: rgba(0, 240, 255, 0.05); font-weight: 700; color: var(--accent-cyan);">
+              </div>
+            </div>
+
+            <!-- 4. Pickup & Schedule Details -->
+            <div class="form-section-header" style="margin-top: 2rem;">
+              <i data-lucide="map-pin"></i>
+              <h3>4. Pickup & Drop Details</h3>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group form-grid-full">
+                <label class="form-label" for="pickupAddress">Pickup Address <span class="required-asterisk">*</span></label>
+                <input type="text" id="pickupAddress" class="form-control" placeholder="House / Flat No., Society, Street" required>
+                <span class="form-error-msg">Pickup Address is required.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="pickupLandmark">Area / Landmark <span class="required-asterisk">*</span></label>
+                <input type="text" id="pickupLandmark" class="form-control" placeholder="e.g. Near Ravet Basket Bridge" required>
+                <span class="form-error-msg">Area / Landmark is required.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="pickupMapsLink">Google Maps Location Link (Optional)</label>
+                <input type="url" id="pickupMapsLink" class="form-control" placeholder="https://maps.app.goo.gl/...">
+              </div>
+
+              <div class="form-group form-grid-full">
+                <label class="form-label" for="dropAddress">Drop-off Address <span class="required-asterisk">*</span></label>
+                <input type="text" id="dropAddress" class="form-control" placeholder="Drop-off location address" required>
+                <label class="checkbox-group">
+                  <input type="checkbox" id="sameAsPickup"> Same address as pickup
+                </label>
+                <span class="form-error-msg">Drop-off Address is required.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="pickupDate">Preferred Pickup Date <span class="required-asterisk">*</span></label>
+                <input type="date" id="pickupDate" class="form-control" required>
+                <span class="form-error-msg">Pickup Date is required.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="pickupTime">Preferred Pickup Time <span class="required-asterisk">*</span></label>
+                <select id="pickupTime" class="form-control" required>
+                  <option value="">-- Select Time Slot --</option>
+                  <option value="08:00 AM - 10:00 AM">08:00 AM - 10:00 AM</option>
+                  <option value="10:00 AM - 12:00 PM">10:00 AM - 12:00 PM</option>
+                  <option value="12:00 PM - 02:00 PM">12:00 PM - 02:00 PM</option>
+                  <option value="02:00 PM - 04:00 PM">04:00 PM - 04:00 PM</option>
+                  <option value="04:00 PM - 06:00 PM">04:00 PM - 06:00 PM</option>
+                  <option value="06:00 PM - 08:00 PM">06:00 PM - 08:00 PM</option>
+                </select>
+                <span class="form-error-msg">Pickup Time is required.</span>
+              </div>
+
+              <div class="form-group form-grid-full">
+                <label class="form-label" for="additionalInstructions">Additional Instructions (Optional)</label>
+                <textarea id="additionalInstructions" class="form-control" rows="3" placeholder="e.g. Call before coming / specific gate entry instructions"></textarea>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-whatsapp btn-full" style="padding: 1.1rem; font-size: 1.1rem; margin-top: 1rem;">
+              <i data-lucide="message-circle"></i> Confirm Booking on WhatsApp
+            </button>
+
+            <div class="privacy-note">
+              <i data-lucide="info" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--accent-cyan);"></i>
+              <strong>Note:</strong> Submitting this form opens WhatsApp with your prefilled details. The listed service price does not automatically include pickup/drop transport fees. Our team will confirm pickup availability and the final payable amount on WhatsApp.
+            </div>
+
+          </form>
+        </div>
+
+        <!-- Sidebar Summary Card -->
+        <div class="summary-card reveal">
+          <h3 class="summary-title"><i data-lucide="receipt"></i> Booking Summary</h3>
+          
+          <ul class="summary-list">
+            <li class="summary-item">
+              <span class="summary-label">Category:</span>
+              <span class="summary-value" id="summaryCategory">-</span>
+            </li>
+            <li class="summary-item">
+              <span class="summary-label">Vehicle Type:</span>
+              <span class="summary-value" id="summaryType">-</span>
+            </li>
+            <li class="summary-item">
+              <span class="summary-label">Selected Service:</span>
+              <span class="summary-value" id="summaryService">-</span>
+            </li>
+          </ul>
+
+          <div class="summary-price-box">
+            <div class="summary-price-label">Listed Service Price</div>
+            <div class="summary-price-value" id="summaryPrice">₹0</div>
+          </div>
+
+          <div style="font-size: 0.85rem; color: var(--text-secondary); text-align: center; line-height: 1.5;">
+            <i data-lucide="shield-check" style="width: 18px; height: 18px; color: var(--accent-cyan); display: block; margin: 0 auto 0.4rem auto;"></i>
+            Professional wash by trained technicians at PCMC Washing Centre, Ravet.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-brand">
+            <img src="logo.png" alt="PCMC Washing Centre" class="brand-logo-img">
+            <div class="brand-text">
+              <span class="brand-title">PCMC <span class="brand-accent">WASHING</span></span>
+              <span class="brand-subtitle">CENTRE</span>
+            </div>
+          </a>
+          <p>Clean Ride, Happy Vibes. Professional motorcycle, car, rickshaw, and tractor washing services in Ravet, PCMC.</p>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="car-wash.html">Car Wash</a></li>
+            <li><a href="bike-wash.html">Bike Wash</a></li>
+            <li><a href="other-vehicles.html">Other Vehicles</a></li>
+            <li><a href="pickup-drop.html">Pickup & Drop</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Services</h4>
+          <ul class="footer-links">
+            <li><a href="car-wash.html">Car Full Wash (From ₹300)</a></li>
+            <li><a href="bike-wash.html">Bike Wash (From ₹60)</a></li>
+            <li><a href="other-vehicles.html">Rickshaw Wash (From ₹100)</a></li>
+            <li><a href="other-vehicles.html">Tractor Wash (From ₹200)</a></li>
+            <li><a href="pickup-drop.html">Pickup & Drop Facility</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Location</h4>
+          <div class="footer-contact-item">
+            <i data-lucide="map-pin" style="width: 18px; height: 18px; color: var(--accent-cyan);"></i>
+            <span>Ravet, PCMC, Pune, Maharashtra</span>
+          </div>
+          <div class="footer-contact-item">
+            <i data-lucide="phone" style="width: 18px; height: 18px; color: var(--accent-cyan);"></i>
+            <a href="tel:+919594054099" style="color: var(--text-secondary);">+91 95940 54099</a>
+          </div>
+          <div style="margin-top: 1rem;">
+            <a href="https://maps.app.goo.gl/UFgvBUuA8TSH2HsUA" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="width: 100%;">
+              <i data-lucide="navigation-2"></i> Open Google Maps
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; <span id="copyrightYear">2026</span> PCMC Washing Centre. All Rights Reserved.</p>
+        <div class="footer-watermark">
+          Designed by <a href="https://veenly.netlify.app" target="_blank" rel="noopener noreferrer" class="veenly-link">Veenly Studios</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="whatsapp-float">
+    <a href="https://wa.me/919594054099?text=Hello%20PCMC%20Washing%20Centre!%20I%20would%20like%20to%20enquire%20about%20pickup%20and%20drop." target="_blank" rel="noopener noreferrer" class="whatsapp-btn" aria-label="Book on WhatsApp">
+      <i data-lucide="message-circle" style="width: 32px; height: 32px;"></i>
+    </a>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+  <script>
+    document.getElementById('copyrightYear').textContent = new Date().getFullYear();
+    lucide.createIcons();
+  </script>
+</body>
+</html>
