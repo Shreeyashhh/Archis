@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports & Financial Analytics — PCMC Washing Centre ERP</title>
+  <link rel="icon" type="image/png" href="../logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="admin.css">
+  <style>
+    .statement-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .statement-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .statement-table tr.header-row td {
+      background: rgba(255, 255, 255, 0.04);
+      font-weight: 700;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+    }
+    .statement-table tr.total-row td {
+      background: rgba(0, 240, 255, 0.06);
+      font-weight: 800;
+      font-size: 1.05rem;
+      border-top: 2px solid rgba(0, 240, 255, 0.3);
+    }
+    .statement-table tr.profit-row td {
+      background: rgba(16, 185, 129, 0.08);
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--accent-green);
+      border-top: 2px solid rgba(16, 185, 129, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-layout">
+    
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-link">
+          <img src="../logo.png" alt="PCMC Washing Centre" class="brand-logo-img">
+          <div>
+            <div class="brand-title">PCMC <span class="brand-accent">ERP</span></div>
+            <span class="brand-badge">Washing Centre</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Management</div>
+        <a href="dashboard.html" class="sidebar-link">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="entries.html" class="sidebar-link">
+          <i data-lucide="table"></i>
+          <span>Daily Entries</span>
+        </a>
+        <a href="expenses.html" class="sidebar-link">
+          <i data-lucide="receipt"></i>
+          <span>Expenses & Capital</span>
+        </a>
+        <a href="orders.html" class="sidebar-link">
+          <i data-lucide="truck"></i>
+          <span>Pickup & Drop Orders</span>
+          <span class="sidebar-badge" id="nav-pending-badge" style="display: none;">0</span>
+        </a>
+
+        <div class="nav-section-title">Intelligence & Data</div>
+        <a href="reports.html" class="sidebar-link active">
+          <i data-lucide="bar-chart-3"></i>
+          <span>Reports & Analytics</span>
+        </a>
+        <a href="import-export.html" class="sidebar-link">
+          <i data-lucide="file-spreadsheet"></i>
+          <span>Excel Import & Export</span>
+        </a>
+
+        <div class="nav-section-title">Administration</div>
+        <a href="settings.html" class="sidebar-link">
+          <i data-lucide="settings"></i>
+          <span>Settings & Config</span>
+        </a>
+        <a href="../index.html" class="sidebar-link" target="_blank">
+          <i data-lucide="external-link"></i>
+          <span>Live Customer Website</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div class="user-avatar" id="admin-display-avatar">A</div>
+          <div class="user-info">
+            <span class="user-name" id="admin-display-name">Business Owner</span>
+            <span class="user-role" id="admin-display-email">admin@pcmc.com</span>
+          </div>
+        </div>
+        <button class="btn-logout" id="btn-logout" title="Sign Out">
+          <i data-lucide="log-out" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      
+      <!-- Topbar -->
+      <header class="admin-topbar">
+        <div class="topbar-left">
+          <button class="btn-sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Navigation">
+            <i data-lucide="menu"></i>
+          </button>
+          <div>
+            <h1 class="topbar-title">Financial Reports & Statements</h1>
+            <p class="topbar-subtitle">Audit-grade P&L statements, category margins, and multi-sheet Excel export</p>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <div id="topbar-status-badge"></div>
+          <button class="btn btn-primary btn-sm" id="btnExportFullReport">
+            <i data-lucide="file-spreadsheet"></i> Download Complete Excel P&L
+          </button>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="admin-content">
+        
+        <!-- Filter Controls -->
+        <div class="filter-bar">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="calendar" style="width: 16px; height: 16px; color: var(--accent-cyan);"></i>
+            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">Statement Period:</span>
+          </div>
+
+          <select id="reportPeriodSelect" class="form-select" style="min-width: 160px;">
+            <option value="thisMonth" selected>This Month</option>
+            <option value="prevMonth">Previous Month</option>
+            <option value="last7">Last 7 Days</option>
+            <option value="today">Today</option>
+            <option value="yesterday">Yesterday</option>
+            <option value="all">All Available Records</option>
+            <option value="custom">Custom Date Range</option>
+          </select>
+
+          <div id="reportCustomBox" style="display: none; align-items: center; gap: 0.5rem;">
+            <input type="date" id="reportCustomStart" class="form-control" style="padding: 0.45rem 0.6rem;">
+            <span style="color: var(--text-muted); font-size: 0.8rem;">to</span>
+            <input type="date" id="reportCustomEnd" class="form-control" style="padding: 0.45rem 0.6rem;">
+            <button id="btnApplyReportCustom" class="btn btn-secondary btn-sm">Generate</button>
+          </div>
+
+          <div style="margin-left: auto; font-size: 0.82rem; color: var(--text-muted);" id="reportDateLabel">
+            Period: Loading...
+          </div>
+        </div>
+
+        <!-- 1. EXECUTIVE P&L STATEMENT -->
+        <div class="panel-card" style="margin-bottom: 1.75rem;">
+          <div class="panel-header">
+            <div class="panel-title">
+              <i data-lucide="file-text" style="color: var(--accent-cyan);"></i>
+              PCMC Washing Centre — Operating Profit & Loss Statement
+            </div>
+            <span id="reportPrintDate" style="font-size: 0.78rem; color: var(--text-muted);"></span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="statement-table">
+              <tbody>
+                <!-- Revenue Header -->
+                <tr class="header-row">
+                  <td colspan="2">1. Operating Revenue (Vehicle Washing Collections)</td>
+                  <td style="text-align: right; width: 180px;">Amount (₹)</td>
+                </tr>
+                <tr>
+                  <td style="padding-left: 2rem;">Motorcycle / Bike Washing Revenue</td>
+                  <td style="color: var(--text-secondary); font-size: 0.8rem;" id="stmt-bike-desc">Commuter & Sports segments</td>
+                  <td style="text-align: right; font-weight: 600;" id="stmt-bike-rev">₹0</td>
+                </tr>
+                <tr>
+                  <td style="padding-left: 2rem;">Car Washing Revenue</td>
+                  <td style="color: var(--text-secondary); font-size: 0.8rem;" id="stmt-car-desc">Water wash, foam body & full underbody wash</td>
+                  <td style="text-align: right; font-weight: 600;" id="stmt-car-rev">₹0</td>
+                </tr>
+                <tr>
+                  <td style="padding-left: 2rem;">Commercial Vehicles (Rickshaw & Tractor)</td>
+                  <td style="color: var(--text-secondary); font-size: 0.8rem;">Auto-rickshaw & agricultural tractor wash</td>
+                  <td style="text-align: right; font-weight: 600;" id="stmt-comm-rev">₹0</td>
+                </tr>
+                <tr>
+                  <td style="padding-left: 2rem;">Miscellaneous Wash & Detailing Services</td>
+                  <td style="color: var(--text-secondary); font-size: 0.8rem;">Add-on washes and custom requests</td>
+                  <td style="text-align: right; font-weight: 600;" id="stmt-misc-rev">₹0</td>
+                </tr>
+                <tr class="total-row">
+                  <td colspan="2" style="color: var(--accent-cyan);">A. GROSS OPERATING REVENUE</td>
+                  <td style="text-align: right; color: var(--accent-cyan);" id="stmt-gross-rev">₹0</td>
+                </tr>
+
+                <!-- Expenses Header -->
+                <tr class="header-row" style="margin-top: 1rem;">
+                  <td colspan="2">2. Operating Expenses & Direct Overheads</td>
+                  <td style="text-align: right;">Amount (₹)</td>
+                </tr>
+                <tbody id="stmt-expense-rows">
+                  <!-- Populated by JS -->
+                </tbody>
+                <tr class="total-row">
+                  <td colspan="2" style="color: var(--accent-red);">B. TOTAL OPERATING EXPENSES</td>
+                  <td style="text-align: right; color: var(--accent-red);" id="stmt-total-exp">₹0</td>
+                </tr>
+
+                <!-- Operating Profit -->
+                <tr class="profit-row">
+                  <td colspan="2">C. NET OPERATING PROFIT (A − B)</td>
+                  <td style="text-align: right;" id="stmt-net-profit">₹0</td>
+                </tr>
+                <tr>
+                  <td colspan="2" style="color: var(--text-secondary); font-size: 0.82rem; padding-left: 2rem;">
+                    Operating Profit Margin Percentage
+                  </td>
+                  <td style="text-align: right; font-weight: 700; color: #fff;" id="stmt-margin-pct">0%</td>
+                </tr>
+
+                <!-- Capital Section -->
+                <tr class="header-row">
+                  <td colspan="2">3. Capital Injections & Asset Additions (Recorded Separately)</td>
+                  <td style="text-align: right;">Amount (₹)</td>
+                </tr>
+                <tr>
+                  <td style="padding-left: 2rem;">Owner Capital Contributions (Equity)</td>
+                  <td style="color: var(--text-secondary); font-size: 0.8rem;">Direct funds injected by owner</td>
+                  <td style="text-align: right; font-weight: 600;" id="stmt-cap-owner">₹0</td>
+                </tr>
+                <tr>
+                  <td style="padding-left: 2rem;">Machinery, Equipment & Infrastructure Investments</td>
+                  <td style="color: var(--text-secondary); font-size: 0.8rem;">CapEx assets (not deducted as day expenses)</td>
+                  <td style="text-align: right; font-weight: 600;" id="stmt-cap-assets">₹0</td>
+                </tr>
+                <tr class="total-row">
+                  <td colspan="2" style="color: var(--accent-purple);">D. TOTAL CAPITAL ADDED</td>
+                  <td style="text-align: right; color: var(--accent-purple);" id="stmt-total-cap">₹0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 2. SERVICE TIER BREAKDOWN & PAYMENT MODE COLLECTIONS -->
+        <div class="dashboard-grid-equal">
+          <!-- Service Tier Breakdown -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div class="panel-title">
+                <i data-lucide="pie-chart" style="color: var(--accent-cyan);"></i>
+                Category Revenue & Volume Share
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th style="text-align: right;">Revenue (₹)</th>
+                    <th style="text-align: right;">% Share</th>
+                  </tr>
+                </thead>
+                <tbody id="categoryBreakdownTbody">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Payment Mode Collections -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div class="panel-title">
+                <i data-lucide="credit-card" style="color: var(--accent-green);"></i>
+                Expense Payment Mode Distribution
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Payment Mode</th>
+                    <th style="text-align: right;">Amount (₹)</th>
+                    <th style="text-align: right;">% Outflow</th>
+                  </tr>
+                </thead>
+                <tbody id="paymentBreakdownTbody">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="supabase-config.js"></script>
+  <script src="auth.js"></script>
+  <script src="db.js"></script>
+  <script src="admin.js"></script>
+  <script src="reports.js"></script>
+</body>
+</html>

@@ -232,11 +232,21 @@ function initBookingForm() {
 
   // Form submission handler
   const bookingForm = document.getElementById('pickup-drop-form');
-  bookingForm.addEventListener('submit', (e) => {
+  const submitBtn = bookingForm.querySelector('button[type="submit"]');
+
+  bookingForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     if (!validateBookingForm()) {
       return;
+    }
+
+    // Prevent accidental duplicate clicks
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.dataset.originalHtml = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i data-lucide="loader" class="spin"></i> Securing Booking Slot...';
+      if (window.lucide) window.lucide.createIcons();
     }
 
     const fullName = document.getElementById('customerName').value.trim();
@@ -250,7 +260,7 @@ function initBookingForm() {
     const regNo = document.getElementById('vehicleReg').value.trim() || 'Not specified';
 
     const selectedService = serviceSelect.value;
-    const price = priceInput.value;
+    const price = parseFloat(priceInput.value) || 0;
 
     const pickupAddress = pickupAddressInput.value.trim();
     const landmark = document.getElementById('pickupLandmark').value.trim();
@@ -261,8 +271,65 @@ function initBookingForm() {
     const dropAddress = sameAddressCheckbox && sameAddressCheckbox.checked ? pickupAddress : (dropAddressInput.value.trim() || pickupAddress);
     const instructions = document.getElementById('additionalInstructions').value.trim() || 'None';
 
-    // Construct standardized structured WhatsApp message
-    let message = `Hello PCMC Washing Centre! I would like to book a vehicle wash with pickup and drop.\n\n`;
+    // 1. Generate unique Booking ID: PCMC-YYYYMMDD-XXXX
+    const datePart = (pickupDate || new Date().toISOString().split('T')[0]).replace(/-/g, '');
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+    const bookingId = `PCMC-${datePart}-${randomSuffix}`;
+
+    // 2. Prepare payload for database
+    const orderRecord = {
+      booking_id: bookingId,
+      customer_name: fullName,
+      customer_mobile: mobile,
+      customer_whatsapp: whatsapp,
+      vehicle_category: categoryName,
+      vehicle_type: vehicleType,
+      vehicle_model: vehicleModel,
+      vehicle_reg_number: regNo,
+      service_name: selectedService,
+      service_price: price,
+      pickup_address: pickupAddress,
+      pickup_landmark: landmark,
+      pickup_maps_link: mapsLink !== 'Not provided' ? mapsLink : null,
+      drop_address: dropAddress,
+      pickup_date: pickupDate,
+      pickup_time_slot: pickupTime,
+      customer_notes: instructions !== 'None' ? instructions : null,
+      order_status: 'New',
+      payment_status: 'Unpaid',
+      final_amount: price
+    };
+
+    // 3. Save to Supabase (or fallback local store if demo mode)
+    try {
+      const isLive = window.PCMC_SUPABASE && window.PCMC_SUPABASE.isReady();
+      if (isLive) {
+        const client = window.PCMC_SUPABASE.client;
+        const { error: dbError } = await client
+          .from('pickup_drop_orders')
+          .insert(orderRecord);
+        if (dbError) {
+          console.warn('Supabase booking save warning:', dbError.message);
+        }
+      } else {
+        // Store in offline mock orders list so it appears in admin portal
+        const raw = localStorage.getItem('pcmc_mock_orders');
+        const mockList = raw ? JSON.parse(raw) : [];
+        mockList.unshift({
+          ...orderRecord,
+          id: 'ord-' + Date.now(),
+          created_at: new Date().toISOString()
+        });
+        localStorage.setItem('pcmc_mock_orders', JSON.stringify(mockList));
+      }
+    } catch (saveErr) {
+      console.warn('Booking persistence error:', saveErr);
+      // Do not block WhatsApp message if database save fails
+    }
+
+    // 4. Construct standardized structured WhatsApp message including Booking ID
+    let message = `*PCMC WASHING CENTRE — DOORSTEP BOOKING*\n`;
+    message += `*Booking ID:* ${bookingId}\n\n`;
     message += `CUSTOMER DETAILS\n`;
     message += `Name: ${fullName}\n`;
     message += `Mobile: ${mobile}\n`;
@@ -294,7 +361,19 @@ function initBookingForm() {
     const encodedMessage = encodeURIComponent(message);
     const waUrl = `https://wa.me/${WA_PHONE_NUMBER}?text=${encodedMessage}`;
 
+    // 5. Open WhatsApp
     window.open(waUrl, '_blank', 'noopener,noreferrer');
+
+    // Re-enable button with success feedback
+    if (submitBtn) {
+      submitBtn.innerHTML = '<i data-lucide="check-circle"></i> Booking Saved! WhatsApp Opened';
+      if (window.lucide) window.lucide.createIcons();
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = submitBtn.dataset.originalHtml || '<i data-lucide="message-circle"></i> Confirm Booking on WhatsApp';
+        if (window.lucide) window.lucide.createIcons();
+      }, 3000);
+    }
   });
 }
 

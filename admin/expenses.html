@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expenses & Capital Tracking — PCMC Washing Centre ERP</title>
+  <link rel="icon" type="image/png" href="../logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="admin.css">
+  <style>
+    .tab-nav {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1.5rem;
+    }
+    .tab-btn {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover {
+      color: #fff;
+    }
+    .tab-btn.active {
+      color: var(--accent-cyan);
+      border-bottom-color: var(--accent-cyan);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-layout">
+    
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-link">
+          <img src="../logo.png" alt="PCMC Washing Centre" class="brand-logo-img">
+          <div>
+            <div class="brand-title">PCMC <span class="brand-accent">ERP</span></div>
+            <span class="brand-badge">Washing Centre</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Management</div>
+        <a href="dashboard.html" class="sidebar-link">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="entries.html" class="sidebar-link">
+          <i data-lucide="table"></i>
+          <span>Daily Entries</span>
+        </a>
+        <a href="expenses.html" class="sidebar-link active">
+          <i data-lucide="receipt"></i>
+          <span>Expenses & Capital</span>
+        </a>
+        <a href="orders.html" class="sidebar-link">
+          <i data-lucide="truck"></i>
+          <span>Pickup & Drop Orders</span>
+          <span class="sidebar-badge" id="nav-pending-badge" style="display: none;">0</span>
+        </a>
+
+        <div class="nav-section-title">Intelligence & Data</div>
+        <a href="reports.html" class="sidebar-link">
+          <i data-lucide="bar-chart-3"></i>
+          <span>Reports & Analytics</span>
+        </a>
+        <a href="import-export.html" class="sidebar-link">
+          <i data-lucide="file-spreadsheet"></i>
+          <span>Excel Import & Export</span>
+        </a>
+
+        <div class="nav-section-title">Administration</div>
+        <a href="settings.html" class="sidebar-link">
+          <i data-lucide="settings"></i>
+          <span>Settings & Config</span>
+        </a>
+        <a href="../index.html" class="sidebar-link" target="_blank">
+          <i data-lucide="external-link"></i>
+          <span>Live Customer Website</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div class="user-avatar" id="admin-display-avatar">A</div>
+          <div class="user-info">
+            <span class="user-name" id="admin-display-name">Business Owner</span>
+            <span class="user-role" id="admin-display-email">admin@pcmc.com</span>
+          </div>
+        </div>
+        <button class="btn-logout" id="btn-logout" title="Sign Out">
+          <i data-lucide="log-out" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      
+      <!-- Topbar -->
+      <header class="admin-topbar">
+        <div class="topbar-left">
+          <button class="btn-sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Navigation">
+            <i data-lucide="menu"></i>
+          </button>
+          <div>
+            <h1 class="topbar-title">Financial Outflows & Capital</h1>
+            <p class="topbar-subtitle">Operating expenses, labor wages, machinery assets & owner investments</p>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <div id="topbar-status-badge"></div>
+          <button class="btn btn-secondary btn-sm" id="btnExportExpenses">
+            <i data-lucide="download"></i> Export Excel
+          </button>
+          <button class="btn btn-danger btn-sm" id="btnOpenExpenseModal">
+            <i data-lucide="plus-circle"></i> Add Expense
+          </button>
+          <button class="btn btn-primary btn-sm" id="btnOpenCapitalModal">
+            <i data-lucide="plus-circle"></i> Add Capital
+          </button>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="admin-content">
+        
+        <!-- Navigation Tabs -->
+        <div class="tab-nav">
+          <button class="tab-btn active" data-tab="tab-expenses">
+            <i data-lucide="receipt"></i>
+            Operating Expenses
+          </button>
+          <button class="tab-btn" data-tab="tab-capital">
+            <i data-lucide="layers"></i>
+            Capital & Asset Investments
+          </button>
+        </div>
+
+        <!-- ================================================================
+             TAB 1: OPERATING EXPENSES
+             ================================================================ -->
+        <div class="tab-content active" id="tab-expenses">
+          
+          <!-- Filter Bar -->
+          <div class="filter-bar">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <i data-lucide="calendar" style="width: 16px; height: 16px; color: var(--accent-red);"></i>
+              <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">Date Filter:</span>
+            </div>
+
+            <select id="expenseDateFilter" class="form-select" style="min-width: 150px;">
+              <option value="thisMonth" selected>This Month</option>
+              <option value="last7">Last 7 Days</option>
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="prevMonth">Previous Month</option>
+              <option value="all">All Records</option>
+              <option value="custom">Custom Range</option>
+            </select>
+
+            <select id="expenseCategoryFilter" class="form-select" style="min-width: 170px;">
+              <option value="all">All Categories</option>
+              <!-- Populated by JS -->
+            </select>
+
+            <div id="expenseCustomBox" style="display: none; align-items: center; gap: 0.5rem;">
+              <input type="date" id="expenseCustomStart" class="form-control" style="padding: 0.45rem 0.6rem;">
+              <span style="color: var(--text-muted); font-size: 0.8rem;">to</span>
+              <input type="date" id="expenseCustomEnd" class="form-control" style="padding: 0.45rem 0.6rem;">
+              <button id="btnApplyExpenseCustom" class="btn btn-secondary btn-sm">Apply</button>
+            </div>
+
+            <div style="position: relative; margin-left: auto; max-width: 250px;">
+              <input type="text" id="expenseSearchInput" class="form-control" placeholder="Search description..." style="width: 100%; padding-left: 2rem;">
+              <i data-lucide="search" style="position: absolute; left: 0.65rem; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--text-muted);"></i>
+            </div>
+          </div>
+
+          <!-- KPI Summary Cards for Expenses -->
+          <div class="kpi-grid">
+            <div class="kpi-card red">
+              <div class="kpi-header">
+                <span class="kpi-label">Total Operating Expenses</span>
+                <div class="kpi-icon-box"><i data-lucide="receipt"></i></div>
+              </div>
+              <div class="kpi-value" id="kpi-expense-total">₹0</div>
+              <div class="kpi-subtext" id="kpi-expense-count-sub">In selected period</div>
+            </div>
+
+            <div class="kpi-card yellow">
+              <div class="kpi-header">
+                <span class="kpi-label">Highest Expense Category</span>
+                <div class="kpi-icon-box"><i data-lucide="pie-chart"></i></div>
+              </div>
+              <div class="kpi-value" id="kpi-expense-top-cat" style="font-size: 1.35rem;">-</div>
+              <div class="kpi-subtext" id="kpi-expense-top-cat-sub">₹0 spent</div>
+            </div>
+
+            <div class="kpi-card blue">
+              <div class="kpi-header">
+                <span class="kpi-label">Primary Payment Mode</span>
+                <div class="kpi-icon-box"><i data-lucide="credit-card"></i></div>
+              </div>
+              <div class="kpi-value" id="kpi-expense-pay-mode" style="font-size: 1.35rem;">Cash</div>
+              <div class="kpi-subtext">Cash vs UPI distribution</div>
+            </div>
+          </div>
+
+          <!-- Expenses Table -->
+          <div class="panel-card" style="padding: 0.5rem; overflow: hidden;">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th style="text-align: right;">Amount (₹)</th>
+                    <th>Payment Mode</th>
+                    <th>Receipt / Bill</th>
+                    <th>Notes</th>
+                    <th style="text-align: center;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="expensesTbody">
+                  <tr><td colspan="8" style="padding: 2rem; text-align: center; color: var(--text-muted);">Loading expenses...</td></tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="3" style="text-align: right; font-weight: 700; color: #fff;">Total Operating Expenses:</td>
+                    <td id="foot-expense-total" style="text-align: right; font-size: 1.05rem; color: var(--accent-red); font-weight: 800;">₹0</td>
+                    <td colspan="4"></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ================================================================
+             TAB 2: CAPITAL & INVESTMENTS
+             ================================================================ -->
+        <div class="tab-content" id="tab-capital">
+          
+          <!-- Informational Notice -->
+          <div style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25); border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.85rem;">
+            <i data-lucide="shield-alert" style="width: 22px; height: 22px; color: var(--accent-purple); flex-shrink: 0;"></i>
+            <div style="font-size: 0.86rem; color: var(--text-secondary); line-height: 1.5;">
+              <strong style="color: #fff;">Accounting Separation Rule:</strong> Capital contributions (Owner Equity) and machinery/asset purchases are recorded here separately. They are <span style="color: var(--accent-cyan); font-weight: 600;">not mixed with service revenue</span> and <span style="color: var(--accent-red); font-weight: 600;">not subtracted as day-to-day operating expenses</span>.
+            </div>
+          </div>
+
+          <!-- KPI Summary for Capital -->
+          <div class="kpi-grid">
+            <div class="kpi-card purple">
+              <div class="kpi-header">
+                <span class="kpi-label">Total Capital & Investments</span>
+                <div class="kpi-icon-box"><i data-lucide="layers"></i></div>
+              </div>
+              <div class="kpi-value" id="kpi-capital-total">₹0</div>
+              <div class="kpi-subtext">Cumulative business investments</div>
+            </div>
+
+            <div class="kpi-card cyan">
+              <div class="kpi-header">
+                <span class="kpi-label">Equipment & Machinery Assets</span>
+                <div class="kpi-icon-box"><i data-lucide="wrench"></i></div>
+              </div>
+              <div class="kpi-value" id="kpi-capital-machinery">₹0</div>
+              <div class="kpi-subtext">High pressure pumps, foam tanks, ramps</div>
+            </div>
+
+            <div class="kpi-card green">
+              <div class="kpi-header">
+                <span class="kpi-label">Owner Capital Contributions</span>
+                <div class="kpi-icon-box"><i data-lucide="user-check"></i></div>
+              </div>
+              <div class="kpi-value" id="kpi-capital-owner">₹0</div>
+              <div class="kpi-subtext">Initial and ongoing owner funds</div>
+            </div>
+          </div>
+
+          <!-- Capital Table -->
+          <div class="panel-card" style="padding: 0.5rem; overflow: hidden;">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Investment Type</th>
+                    <th>Purpose / Asset Purchased</th>
+                    <th style="text-align: right;">Amount (₹)</th>
+                    <th>Payment Method</th>
+                    <th>Notes</th>
+                    <th style="text-align: center;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="capitalTbody">
+                  <tr><td colspan="7" style="padding: 2rem; text-align: center; color: var(--text-muted);">Loading capital records...</td></tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="3" style="text-align: right; font-weight: 700; color: #fff;">Total Capital Invested:</td>
+                    <td id="foot-capital-total" style="text-align: right; font-size: 1.05rem; color: var(--accent-purple); font-weight: 800;">₹0</td>
+                    <td colspan="3"></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: ADD / EDIT EXPENSE -->
+  <div class="modal-backdrop" id="expenseModal">
+    <div class="modal-card" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="expenseModalTitle">Add Operating Expense</h3>
+        <button class="btn-close-modal" id="btnCloseExpenseModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="expenseForm" novalidate>
+          <input type="hidden" id="formExpenseId">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="formExpenseDate">Expense Date <span style="color: var(--accent-red);">*</span></label>
+              <input type="date" id="formExpenseDate" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="formExpenseCategory">Category <span style="color: var(--accent-red);">*</span></label>
+              <select id="formExpenseCategory" class="form-select" required>
+                <!-- Populated by JS -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="formExpenseDesc">Description / Item Name <span style="color: var(--accent-red);">*</span></label>
+            <input type="text" id="formExpenseDesc" class="form-control" placeholder="e.g. Foam shampoo 5L can, electricity bill, staff tea" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="formExpenseAmount">Amount (₹) <span style="color: var(--accent-red);">*</span></label>
+              <input type="number" id="formExpenseAmount" class="form-control" min="1" step="any" placeholder="0.00" required style="font-weight: 700; color: var(--accent-red);">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="formExpensePayMethod">Payment Mode</label>
+              <select id="formExpensePayMethod" class="form-select">
+                <option value="Cash">Cash</option>
+                <option value="UPI">UPI / GPay / PhonePe</option>
+                <option value="Bank Transfer">Bank Transfer / NEFT</option>
+                <option value="Cheque">Cheque</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="formExpenseReceipt">Receipt / Invoice No. (Optional)</label>
+            <input type="text" id="formExpenseReceipt" class="form-control" placeholder="e.g. INV-9042 / MSEDCL-5821">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="formExpenseNotes">Additional Notes</label>
+            <input type="text" id="formExpenseNotes" class="form-control" placeholder="Optional supplier or vendor remarks">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btnCancelExpense">Cancel</button>
+        <button type="button" class="btn btn-danger" id="btnSaveExpense">
+          <i data-lucide="check"></i> Save Expense
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT CAPITAL -->
+  <div class="modal-backdrop" id="capitalModal">
+    <div class="modal-card" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="capitalModalTitle">Add Capital / Asset Investment</h3>
+        <button class="btn-close-modal" id="btnCloseCapitalModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="capitalForm" novalidate>
+          <input type="hidden" id="formCapitalId">
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="formCapitalDate">Investment Date <span style="color: var(--accent-cyan);">*</span></label>
+              <input type="date" id="formCapitalDate" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="formCapitalType">Investment Type <span style="color: var(--accent-cyan);">*</span></label>
+              <select id="formCapitalType" class="form-select" required>
+                <!-- Populated by JS -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="formCapitalPurpose">Purpose / Asset Description <span style="color: var(--accent-cyan);">*</span></label>
+            <input type="text" id="formCapitalPurpose" class="form-control" placeholder="e.g. High Pressure Triplex Pump 180 Bar, Owner Initial Reserve" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="formCapitalAmount">Amount (₹) <span style="color: var(--accent-cyan);">*</span></label>
+              <input type="number" id="formCapitalAmount" class="form-control" min="1" step="any" placeholder="0.00" required style="font-weight: 700; color: var(--accent-purple);">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="formCapitalPayMethod">Payment Mode</label>
+              <select id="formCapitalPayMethod" class="form-select">
+                <option value="Bank Transfer">Bank Transfer / NEFT</option>
+                <option value="UPI">UPI</option>
+                <option value="Cheque">Cheque</option>
+                <option value="Cash">Cash</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="formCapitalNotes">Remarks / Asset Lifetime Notes</label>
+            <input type="text" id="formCapitalNotes" class="form-control" placeholder="e.g. 1 Year warranty from manufacturer">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btnCancelCapital">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btnSaveCapital">
+          <i data-lucide="check"></i> Save Investment
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="supabase-config.js"></script>
+  <script src="auth.js"></script>
+  <script src="db.js"></script>
+  <script src="admin.js"></script>
+  <script src="expenses.js"></script>
+</body>
+</html>

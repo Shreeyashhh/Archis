@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Business Entries — PCMC Washing Centre ERP</title>
+  <link rel="icon" type="image/png" href="../logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="admin.css">
+  <style>
+    .cell-num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .qty-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1px 4px;
+      border-radius: 3px;
+      color: var(--text-secondary);
+      margin-right: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-layout">
+    
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="brand-link">
+          <img src="../logo.png" alt="PCMC Washing Centre" class="brand-logo-img">
+          <div>
+            <div class="brand-title">PCMC <span class="brand-accent">ERP</span></div>
+            <span class="brand-badge">Washing Centre</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Management</div>
+        <a href="dashboard.html" class="sidebar-link">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="entries.html" class="sidebar-link active">
+          <i data-lucide="table"></i>
+          <span>Daily Entries</span>
+        </a>
+        <a href="expenses.html" class="sidebar-link">
+          <i data-lucide="receipt"></i>
+          <span>Expenses & Capital</span>
+        </a>
+        <a href="orders.html" class="sidebar-link">
+          <i data-lucide="truck"></i>
+          <span>Pickup & Drop Orders</span>
+          <span class="sidebar-badge" id="nav-pending-badge" style="display: none;">0</span>
+        </a>
+
+        <div class="nav-section-title">Intelligence & Data</div>
+        <a href="reports.html" class="sidebar-link">
+          <i data-lucide="bar-chart-3"></i>
+          <span>Reports & Analytics</span>
+        </a>
+        <a href="import-export.html" class="sidebar-link">
+          <i data-lucide="file-spreadsheet"></i>
+          <span>Excel Import & Export</span>
+        </a>
+
+        <div class="nav-section-title">Administration</div>
+        <a href="settings.html" class="sidebar-link">
+          <i data-lucide="settings"></i>
+          <span>Settings & Config</span>
+        </a>
+        <a href="../index.html" class="sidebar-link" target="_blank">
+          <i data-lucide="external-link"></i>
+          <span>Live Customer Website</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div class="user-avatar" id="admin-display-avatar">A</div>
+          <div class="user-info">
+            <span class="user-name" id="admin-display-name">Business Owner</span>
+            <span class="user-role" id="admin-display-email">admin@pcmc.com</span>
+          </div>
+        </div>
+        <button class="btn-logout" id="btn-logout" title="Sign Out">
+          <i data-lucide="log-out" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      
+      <!-- Topbar -->
+      <header class="admin-topbar">
+        <div class="topbar-left">
+          <button class="btn-sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Navigation">
+            <i data-lucide="menu"></i>
+          </button>
+          <div>
+            <h1 class="topbar-title">Daily Business Entries</h1>
+            <p class="topbar-subtitle">Spreadsheet-style daily vehicle wash records, services breakdown & day income</p>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <div id="topbar-status-badge"></div>
+          <button class="btn btn-secondary btn-sm" id="btnExportEntries">
+            <i data-lucide="download"></i> Export Excel
+          </button>
+          <a href="import-export.html" class="btn btn-secondary btn-sm">
+            <i data-lucide="upload"></i> Import Excel
+          </a>
+          <button class="btn btn-primary btn-sm" id="btnOpenAddModal">
+            <i data-lucide="plus-circle"></i> Add Day Entry
+          </button>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="admin-content">
+        
+        <!-- Filter and Search Toolbar -->
+        <div class="filter-bar">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <i data-lucide="calendar" style="width: 16px; height: 16px; color: var(--accent-cyan);"></i>
+            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">Date Filter:</span>
+          </div>
+
+          <select id="entryDateFilter" class="form-select" style="min-width: 160px;">
+            <option value="thisMonth" selected>This Month</option>
+            <option value="last7">Last 7 Days</option>
+            <option value="today">Today</option>
+            <option value="yesterday">Yesterday</option>
+            <option value="prevMonth">Previous Month</option>
+            <option value="all">All Records</option>
+            <option value="custom">Custom Range</option>
+          </select>
+
+          <div id="entryCustomRangeBox" style="display: none; align-items: center; gap: 0.5rem;">
+            <input type="date" id="entryCustomStart" class="form-control" style="padding: 0.45rem 0.6rem;">
+            <span style="color: var(--text-muted); font-size: 0.8rem;">to</span>
+            <input type="date" id="entryCustomEnd" class="form-control" style="padding: 0.45rem 0.6rem;">
+            <button id="btnApplyEntryCustom" class="btn btn-secondary btn-sm">Apply</button>
+          </div>
+
+          <div style="position: relative; margin-left: 0.5rem; flex: 1; max-width: 280px;">
+            <input type="text" id="entrySearchInput" class="form-control" placeholder="Search date or note..." style="width: 100%; padding-left: 2rem;">
+            <i data-lucide="search" style="position: absolute; left: 0.65rem; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--text-muted);"></i>
+          </div>
+
+          <div style="margin-left: auto; display: flex; align-items: center; gap: 0.75rem;">
+            <span id="entriesCountLabel" style="font-size: 0.82rem; color: var(--text-muted);">0 records</span>
+          </div>
+        </div>
+
+        <!-- EXCEL SPREADSHEET TABLE -->
+        <div class="panel-card" style="padding: 0.5rem; overflow: hidden;">
+          <div class="excel-grid-container" style="max-height: 720px;">
+            <table class="excel-grid-table" id="dailyEntriesTable">
+              <thead>
+                <!-- Group Headers -->
+                <tr>
+                  <th rowspan="2" style="min-width: 105px;">Date</th>
+                  <th rowspan="2" style="min-width: 90px;">Day</th>
+                  <th colspan="2" class="header-group">Bikes</th>
+                  <th colspan="4" class="header-group">Cars</th>
+                  <th colspan="1" class="header-group">Rickshaw</th>
+                  <th colspan="1" class="header-group">Tractor / Tempo</th>
+                  <th colspan="1" class="header-group">Other</th>
+                  <th rowspan="2" class="header-group" style="min-width: 110px; background: rgba(0,240,255,0.15);">Day Income (₹)</th>
+                  <th rowspan="2" style="min-width: 100px;">Expense (₹)</th>
+                  <th rowspan="2" style="min-width: 105px;">Operating Profit (₹)</th>
+                  <th rowspan="2" style="min-width: 140px;">Daily Note</th>
+                  <th rowspan="2" style="min-width: 85px;">Actions</th>
+                </tr>
+                <!-- Sub-columns matching Excel -->
+                <tr>
+                  <!-- Bikes -->
+                  <th title="Scooter / Commuter">Commuter / Scooty</th>
+                  <th title="Sports / Bullet">Sports / Bullet</th>
+                  <!-- Cars -->
+                  <th title="Water Wash (Only Body)">Water Wash</th>
+                  <th title="Body Wash (Foam Wash)">Only Body</th>
+                  <th title="Full Wash">Full Wash</th>
+                  <th title="Underbody + Full Body">Underbody + Full</th>
+                  <!-- Rickshaw -->
+                  <th title="Rikshaw Full Wash">Full Wash</th>
+                  <!-- Tractor -->
+                  <th title="Tractor / Tempo Wash">Tractor / Tempo</th>
+                  <!-- Misc -->
+                  <th title="Miscellaneous">Miscellaneous</th>
+                </tr>
+              </thead>
+              <tbody id="dailyEntriesTbody">
+                <tr>
+                  <td colspan="15" style="padding: 2.5rem; text-align: center; color: var(--text-muted);">
+                    Loading records...
+                  </td>
+                </tr>
+              </tbody>
+              <!-- Auto Summary Footer -->
+              <tfoot id="dailyEntriesTfoot">
+                <tr>
+                  <td colspan="2" style="text-align: right; font-weight: 700; color: #fff;">Totals / Averages:</td>
+                  <td id="tot-bike-scooter" class="cell-num">-</td>
+                  <td id="tot-bike-sports" class="cell-num">-</td>
+                  <td id="tot-car-water" class="cell-num">-</td>
+                  <td id="tot-car-body" class="cell-num">-</td>
+                  <td id="tot-car-full" class="cell-num">-</td>
+                  <td id="tot-car-underbody" class="cell-num">-</td>
+                  <td id="tot-rikshaw" class="cell-num">-</td>
+                  <td id="tot-tractor" class="cell-num">-</td>
+                  <td id="tot-misc" class="cell-num">-</td>
+                  <td id="tot-day-income" class="cell-num highlight-income" style="font-size: 0.95rem;">₹0</td>
+                  <td id="tot-expenses" class="cell-num" style="color: var(--accent-red); font-weight: 700;">₹0</td>
+                  <td id="tot-profit" class="cell-num highlight-profit" style="font-size: 0.95rem;">₹0</td>
+                  <td colspan="2" style="text-align: center; font-size: 0.78rem; color: var(--text-muted);" id="tot-vehicle-count">0 vehicles total</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: ADD / EDIT DAILY ENTRY -->
+  <div class="modal-backdrop" id="entryModal">
+    <div class="modal-card" style="max-width: 780px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="entryModalTitle">Add Daily Business Entry</h3>
+        <button class="btn-close-modal" id="btnCloseEntryModal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="dailyEntryForm" novalidate>
+          
+          <!-- Date and Day row -->
+          <div class="form-row" style="margin-bottom: 1.25rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="formRecordDate">Record Date <span style="color: var(--accent-red);">*</span></label>
+              <input type="date" id="formRecordDate" class="form-control" required style="font-weight: 700;">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="formDayOfWeek">Day of Week (Auto-calculated)</label>
+              <input type="text" id="formDayOfWeek" class="form-control" readonly style="background: rgba(255,255,255,0.04); color: var(--accent-cyan); font-weight: 700;">
+            </div>
+          </div>
+
+          <!-- Section: Service Breakdown Grid -->
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+              <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--accent-cyan);">
+                <i data-lucide="sparkles" style="width: 15px; height: 15px; vertical-align: middle;"></i>
+                Vehicle Services Breakdown & Income
+              </h4>
+              <span style="font-size: 0.78rem; color: var(--text-muted);">Enter vehicle count or amount directly</span>
+            </div>
+
+            <!-- Dynamic Services Form List -->
+            <div id="servicesFormContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 0.85rem;">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Live Modal Calculations Bar -->
+          <div style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.25); border-radius: var(--radius-md); padding: 1rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Total Vehicles Washed</div>
+              <div id="modalTotalVehicles" style="font-size: 1.35rem; font-weight: 800; color: #fff;">0</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--accent-cyan); font-weight: 700;">Total Day Income (Auto-calculated)</div>
+              <div id="modalTotalIncome" style="font-size: 1.5rem; font-weight: 800; color: var(--accent-cyan);">₹0</div>
+            </div>
+          </div>
+
+          <!-- Daily Notes -->
+          <div class="form-group">
+            <label class="form-label" for="formRecordNotes">Operational Notes / Remarks (Optional)</label>
+            <input type="text" id="formRecordNotes" class="form-control" placeholder="e.g. Heavy rush post-Diwali, pressure washer pump oil changed...">
+          </div>
+
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btnCancelEntry">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btnSaveEntry">
+          <i data-lucide="check"></i> Save Daily Record
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="supabase-config.js"></script>
+  <script src="auth.js"></script>
+  <script src="db.js"></script>
+  <script src="admin.js"></script>
+  <script src="entries.js"></script>
+</body>
+</html>
