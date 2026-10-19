@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Excel Import & Export — PCMC Washing Centre ERP</title>
+  <title>Excel Data Export & Backup — PCMC Washing Centre ERP</title>
   <link rel="icon" type="image/png" href="../logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,31 +13,34 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <link rel="stylesheet" href="admin.css">
   <style>
-    .dropzone {
-      border: 2px dashed rgba(0, 240, 255, 0.35);
-      background: rgba(0, 240, 255, 0.03);
-      border-radius: var(--radius-lg);
-      padding: 2.5rem 1.5rem;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.25s ease;
-    }
-    .dropzone:hover, .dropzone.dragover {
-      border-color: var(--accent-cyan);
-      background: rgba(0, 240, 255, 0.08);
-      transform: scale(1.005);
-    }
-    .mapping-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    .mapping-item {
+    .export-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
-      padding: 0.85rem;
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .export-card:hover {
+      border-color: #2e3b56;
+      box-shadow: var(--shadow-sm);
+    }
+    .export-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+    }
+    .export-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
     }
   </style>
 </head>
@@ -55,6 +58,9 @@
             <span class="brand-badge">Washing Centre</span>
           </div>
         </a>
+        <button class="btn-sidebar-close" id="sidebar-close" aria-label="Close Navigation">
+          <i data-lucide="x"></i>
+        </button>
       </div>
 
       <nav class="sidebar-nav">
@@ -83,8 +89,8 @@
           <span>Reports & Analytics</span>
         </a>
         <a href="import-export.html" class="sidebar-link active">
-          <i data-lucide="file-spreadsheet"></i>
-          <span>Excel Import & Export</span>
+          <i data-lucide="download"></i>
+          <span>Excel Data Export</span>
         </a>
 
         <div class="nav-section-title">Administration</div>
@@ -122,189 +128,196 @@
             <i data-lucide="menu"></i>
           </button>
           <div>
-            <h1 class="topbar-title">Excel Import & Export Center</h1>
-            <p class="topbar-subtitle">Seamless spreadsheet reconciliation, column mapping, and bulk data backup</p>
+            <h1 class="topbar-title">Excel Data Export & Backup Center</h1>
+            <p class="topbar-subtitle">Instant spreadsheet exports, audit logs, and complete offline database backups</p>
           </div>
         </div>
 
         <div class="topbar-actions">
           <div id="topbar-status-badge"></div>
+          <button class="btn btn-primary btn-sm" id="btnQuickBackupTop">
+            <i data-lucide="shield-check"></i> Export Full Backup
+          </button>
         </div>
       </header>
 
       <!-- Content -->
       <div class="admin-content">
         
-        <!-- TWO COLUMN LAYOUT: IMPORT & EXPORT -->
-        <div class="dashboard-grid-2">
+        <!-- Live Available Records Overview -->
+        <div class="kpi-grid">
+          <div class="kpi-card cyan">
+            <div class="kpi-header">
+              <span class="kpi-label">Daily Business Records</span>
+              <div class="kpi-icon-box"><i data-lucide="table"></i></div>
+            </div>
+            <div class="kpi-value" id="stat-daily-count">...</div>
+            <div class="kpi-subtext">Wash income entries available</div>
+          </div>
+
+          <div class="kpi-card red">
+            <div class="kpi-header">
+              <span class="kpi-label">Operating Expenses</span>
+              <div class="kpi-icon-box"><i data-lucide="receipt"></i></div>
+            </div>
+            <div class="kpi-value" id="stat-expenses-count">...</div>
+            <div class="kpi-subtext">Itemized operational outflows</div>
+          </div>
+
+          <div class="kpi-card purple">
+            <div class="kpi-header">
+              <span class="kpi-label">Capital & Asset Records</span>
+              <div class="kpi-icon-box"><i data-lucide="layers"></i></div>
+            </div>
+            <div class="kpi-value" id="stat-capital-count">...</div>
+            <div class="kpi-subtext">Machinery & owner investments</div>
+          </div>
+
+          <div class="kpi-card blue">
+            <div class="kpi-header">
+              <span class="kpi-label">Pickup & Drop Orders</span>
+              <div class="kpi-icon-box"><i data-lucide="truck"></i></div>
+            </div>
+            <div class="kpi-value" id="stat-orders-count">...</div>
+            <div class="kpi-subtext">Customer doorstep orders</div>
+          </div>
+        </div>
+
+        <!-- EXPORT CARDS GRID -->
+        <h2 style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); font-weight: 700; margin-bottom: 0.85rem;">
+          <i data-lucide="file-spreadsheet" style="width: 15px; height: 15px; display: inline-block; vertical-align: middle; color: var(--accent-primary);"></i>
+          Download Spreadsheets & Offline Backups
+        </h2>
+
+        <div class="export-grid">
           
-          <!-- LEFT: IMPORT WORKFLOW -->
-          <div class="panel-card">
-            <div class="panel-header">
-              <div class="panel-title">
-                <i data-lucide="upload-cloud" style="color: var(--accent-cyan);"></i>
-                Upload Excel / CSV Workbook
+          <!-- 1. DAILY BUSINESS RECORDS -->
+          <div class="export-card">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <div style="width: 38px; height: 38px; border-radius: var(--radius-sm); background: var(--accent-primary-subtle); color: var(--accent-primary); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="table"></i>
+                </div>
+                <span class="export-badge" style="background: var(--accent-primary-subtle); color: #60a5fa;">.XLSX EXCEL</span>
               </div>
-              <span style="font-size: 0.78rem; color: var(--text-muted);">Supports .xlsx and .csv</span>
-            </div>
-
-            <!-- Import Type & Conflict Strategy -->
-            <div class="form-row" style="margin-bottom: 1.25rem;">
-              <div class="form-group" style="margin-bottom: 0;">
-                <label class="form-label" for="importTargetType">Data Type to Import</label>
-                <select id="importTargetType" class="form-select">
-                  <option value="daily_records" selected>Daily Business Records (Vehicle Income)</option>
-                  <option value="expenses">Operating Expenses</option>
-                  <option value="capital">Capital & Investments</option>
-                </select>
-              </div>
-
-              <div class="form-group" style="margin-bottom: 0;">
-                <label class="form-label" for="importConflictStrategy">Duplicate Date Strategy</label>
-                <select id="importConflictStrategy" class="form-select">
-                  <option value="overwrite" selected>Overwrite / Update existing records</option>
-                  <option value="skip">Skip existing records (Keep original)</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Drag and Drop Box -->
-            <div class="dropzone" id="fileDropzone">
-              <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" style="display: none;">
-              <i data-lucide="file-spreadsheet" style="width: 48px; height: 48px; color: var(--accent-cyan); margin-bottom: 0.75rem;"></i>
-              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem;">Click to browse or drop your spreadsheet here</h3>
-              <p style="font-size: 0.82rem; color: var(--text-secondary); max-width: 450px; margin: 0 auto;">
-                Upload your owner Excel log. The system will automatically detect and match columns for Commuter / Sports bikes, Cars, Rickshaws, and Day Income.
+              <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.35rem;">Daily Business Records</h3>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
+                Itemized vehicle washing records, commuter & sports bike revenue, car wash tiers, rickshaw/tractor washes, and daily notes.
               </p>
-              <div id="selectedFileName" style="margin-top: 0.85rem; font-weight: 700; color: var(--accent-cyan); display: none;"></div>
             </div>
-
-            <!-- COLUMN MAPPING CONTAINER (Visible after file selection) -->
-            <div id="mappingSection" style="display: none; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
-              <div style="display: flex; align-items: center; justify-content: space-between;">
-                <div>
-                  <h4 style="font-size: 0.95rem; font-weight: 700; color: #fff;">Verify Column Mappings</h4>
-                  <p style="font-size: 0.78rem; color: var(--text-secondary);">Match your spreadsheet columns with the system database fields.</p>
-                </div>
-                <button class="btn btn-secondary btn-xs" id="btnAutoMap">
-                  <i data-lucide="sparkles"></i> Re-Auto Match
-                </button>
-              </div>
-
-              <div class="mapping-grid" id="mappingFieldsContainer">
-                <!-- Populated by JS -->
-              </div>
-            </div>
-
-            <!-- PREVIEW CONTAINER -->
-            <div id="previewSection" style="display: none; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                <h4 style="font-size: 0.95rem; font-weight: 700; color: #fff;">
-                  Data Validation Preview (<span id="previewStatsLabel">0 rows</span>)
-                </h4>
-                <div id="previewWarningBox" style="font-size: 0.78rem;"></div>
-              </div>
-
-              <div class="table-responsive" style="max-height: 280px;">
-                <table class="data-table" id="previewTable">
-                  <thead id="previewTableHead"></thead>
-                  <tbody id="previewTableBody"></tbody>
-                </table>
-              </div>
-
-              <div style="margin-top: 1.25rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
-                <button class="btn btn-secondary" id="btnCancelImport">Cancel</button>
-                <button class="btn btn-primary" id="btnCommitImport">
-                  <i data-lucide="check-circle-2"></i> Commit Import to Database
-                </button>
-              </div>
-            </div>
-
+            <button class="btn btn-secondary" id="btnExportAllDaily" style="width: 100%; justify-content: center;">
+              <i data-lucide="download"></i> Download Daily Records (.xlsx)
+            </button>
           </div>
 
-          <!-- RIGHT: EXPORT TOOLBOX & AUDIT HISTORY -->
-          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-            
-            <!-- Export Hub -->
-            <div class="panel-card">
-              <div class="panel-header">
-                <div class="panel-title">
-                  <i data-lucide="download" style="color: var(--accent-cyan);"></i>
-                  One-Click Excel Exporters
+          <!-- 2. OPERATING EXPENSES -->
+          <div class="export-card">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <div style="width: 38px; height: 38px; border-radius: var(--radius-sm); background: var(--accent-danger-subtle); color: var(--accent-danger); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="receipt"></i>
                 </div>
+                <span class="export-badge" style="background: var(--accent-danger-subtle); color: #f87171;">.XLSX EXCEL</span>
               </div>
-
-              <div style="display: flex; flex-direction: column; gap: 0.85rem;">
-                <button class="btn btn-secondary" id="btnExportAllDaily" style="justify-content: flex-start; padding: 0.85rem 1rem;">
-                  <i data-lucide="table" style="color: var(--accent-cyan);"></i>
-                  <div style="text-align: left; margin-left: 0.5rem;">
-                    <div style="font-weight: 700;">Export All Daily Business Records (.xlsx)</div>
-                    <div style="font-size: 0.72rem; color: var(--text-muted);">Vehicle services breakdown, day income, expenses & profit</div>
-                  </div>
-                </button>
-
-                <button class="btn btn-secondary" id="btnExportAllExpenses" style="justify-content: flex-start; padding: 0.85rem 1rem;">
-                  <i data-lucide="receipt" style="color: var(--accent-red);"></i>
-                  <div style="text-align: left; margin-left: 0.5rem;">
-                    <div style="font-weight: 700;">Export Operating Expenses Log (.xlsx)</div>
-                    <div style="font-size: 0.72rem; color: var(--text-muted);">Itemized categories, suppliers, payment methods</div>
-                  </div>
-                </button>
-
-                <button class="btn btn-secondary" id="btnExportAllCapital" style="justify-content: flex-start; padding: 0.85rem 1rem;">
-                  <i data-lucide="layers" style="color: var(--accent-purple);"></i>
-                  <div style="text-align: left; margin-left: 0.5rem;">
-                    <div style="font-weight: 700;">Export Capital & Asset Investments (.xlsx)</div>
-                    <div style="font-size: 0.72rem; color: var(--text-muted);">Machinery purchases and owner equity injections</div>
-                  </div>
-                </button>
-
-                <button class="btn btn-secondary" id="btnExportAllOrders" style="justify-content: flex-start; padding: 0.85rem 1rem;">
-                  <i data-lucide="truck" style="color: var(--whatsapp-green);"></i>
-                  <div style="text-align: left; margin-left: 0.5rem;">
-                    <div style="font-weight: 700;">Export Pickup & Drop Orders Log (.xlsx)</div>
-                    <div style="font-size: 0.72rem; color: var(--text-muted);">All customer bookings, addresses, and fulfillment history</div>
-                  </div>
-                </button>
-
-                <button class="btn btn-secondary" id="btnExportFullJsonBackup" style="justify-content: flex-start; padding: 0.85rem 1rem;">
-                  <i data-lucide="database" style="color: var(--accent-yellow);"></i>
-                  <div style="text-align: left; margin-left: 0.5rem;">
-                    <div style="font-weight: 700;">Download Full ERP Database Backup (.json)</div>
-                    <div style="font-size: 0.72rem; color: var(--text-muted);">Complete raw snapshot of all tables for safe offline archival</div>
-                  </div>
-                </button>
-              </div>
+              <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.35rem;">Operating Expenses Log</h3>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
+                Detailed operating cost log by category (electricity, water, wages, shampoos/chemicals, maintenance), payment method, and receipts.
+              </p>
             </div>
-
-            <!-- Import History Log -->
-            <div class="panel-card" style="flex: 1;">
-              <div class="panel-header">
-                <div class="panel-title">
-                  <i data-lucide="history" style="color: var(--text-secondary);"></i>
-                  Spreadsheet Import Audit Log
-                </div>
-              </div>
-
-              <div class="table-responsive" style="max-height: 250px;">
-                <table class="data-table">
-                  <thead>
-                    <tr>
-                      <th>File Name</th>
-                      <th>Import Type</th>
-                      <th>Status</th>
-                      <th>Records</th>
-                    </tr>
-                  </thead>
-                  <tbody id="importHistoryTbody">
-                    <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No previous imports logged.</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
+            <button class="btn btn-secondary" id="btnExportAllExpenses" style="width: 100%; justify-content: center;">
+              <i data-lucide="download"></i> Download Expenses Log (.xlsx)
+            </button>
           </div>
 
+          <!-- 3. CAPITAL & INVESTMENTS -->
+          <div class="export-card">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <div style="width: 38px; height: 38px; border-radius: var(--radius-sm); background: var(--accent-purple-subtle); color: var(--accent-purple); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="layers"></i>
+                </div>
+                <span class="export-badge" style="background: var(--accent-purple-subtle); color: #c084fc;">.XLSX EXCEL</span>
+              </div>
+              <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.35rem;">Capital & Asset Investments</h3>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
+                Machinery purchases (high pressure pumps, foam tanks, ramps) and owner equity contributions cleanly separated from daily expenses.
+              </p>
+            </div>
+            <button class="btn btn-secondary" id="btnExportAllCapital" style="width: 100%; justify-content: center;">
+              <i data-lucide="download"></i> Download Capital Log (.xlsx)
+            </button>
+          </div>
+
+          <!-- 4. PICKUP & DROP ORDERS -->
+          <div class="export-card">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <div style="width: 38px; height: 38px; border-radius: var(--radius-sm); background: rgba(56, 189, 248, 0.12); color: #38bdf8; display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="truck"></i>
+                </div>
+                <span class="export-badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8;">.XLSX EXCEL</span>
+              </div>
+              <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.35rem;">Pickup & Drop Orders</h3>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
+                Complete customer bookings, phone numbers, vehicle registrations, pickup addresses, fulfillment schedule, and payment states.
+              </p>
+            </div>
+            <button class="btn btn-secondary" id="btnExportAllOrders" style="width: 100%; justify-content: center;">
+              <i data-lucide="download"></i> Download Orders Log (.xlsx)
+            </button>
+          </div>
+
+          <!-- 5. COMPLETE MULTI-SHEET FINANCIAL STATEMENT -->
+          <div class="export-card">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <div style="width: 38px; height: 38px; border-radius: var(--radius-sm); background: var(--accent-success-subtle); color: var(--accent-success); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="file-text"></i>
+                </div>
+                <span class="export-badge" style="background: var(--accent-success-subtle); color: #34d399;">MULTI-SHEET</span>
+              </div>
+              <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.35rem;">Complete Financial P&L Workbook</h3>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
+                Comprehensive audit-ready workbook containing Summary P&L Statement, Daily Income breakdown, Operating Expenses, and Capital assets on separate tabs.
+              </p>
+            </div>
+            <a href="reports.html" class="btn btn-secondary" style="width: 100%; justify-content: center;">
+              <i data-lucide="arrow-right"></i> Open P&L Reports Exporter
+            </a>
+          </div>
+
+          <!-- 6. FULL ERP DATABASE BACKUP -->
+          <div class="export-card" style="border-color: rgba(245, 158, 11, 0.35); background: rgba(245, 158, 11, 0.03);">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <div style="width: 38px; height: 38px; border-radius: var(--radius-sm); background: var(--accent-warning-subtle); color: var(--accent-warning); display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="database"></i>
+                </div>
+                <span class="export-badge" style="background: var(--accent-warning-subtle); color: #fbbf24;">FULL BACKUP</span>
+              </div>
+              <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 0.35rem;">Full Database Archive (.json)</h3>
+              <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
+                Download complete, raw offline snapshot of all system tables (entries, expenses, capital, orders) for safe external archival and disaster backup.
+              </p>
+            </div>
+            <button class="btn btn-primary" id="btnExportFullJsonBackup" style="width: 100%; justify-content: center;">
+              <i data-lucide="database"></i> Download Full JSON Backup
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Archival & Data Safety Information Banner -->
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.15rem 1.35rem; display: flex; align-items: flex-start; gap: 1rem; margin-top: 1rem;">
+          <div style="width: 36px; height: 36px; border-radius: var(--radius-sm); background: var(--accent-primary-subtle); color: var(--accent-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">
+            <i data-lucide="shield-check" style="width: 18px; height: 18px;"></i>
+          </div>
+          <div>
+            <h4 style="font-size: 0.92rem; font-weight: 700; color: #fff; margin-bottom: 0.35rem;">Business Data Safety & Archival Guidelines</h4>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55;">
+              All exported Excel workbooks are compatible with Microsoft Excel, Google Sheets, LibreOffice, and Apple Numbers. We recommend downloading a <strong>Full Database Archive (.json)</strong> at the end of every business month and storing it securely on an external drive or cloud storage.
+            </p>
+          </div>
         </div>
 
       </div>

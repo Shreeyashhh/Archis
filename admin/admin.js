@@ -9,15 +9,28 @@ const PCMC_UI = {
     this.setupAuthUI();
     this.setupStatusIndicator();
     this.renderToastContainer();
+    this.setupTableScrollHints();
     if (window.lucide) {
       window.lucide.createIcons();
     }
   },
 
-  // Setup mobile sidebar toggle & overlay
+  // Setup mobile sidebar toggle, overlay, gestures & close button
   setupSidebar() {
     const toggleBtn = document.getElementById('sidebar-toggle');
     const sidebar = document.querySelector('.admin-sidebar');
+    const sidebarHeader = document.querySelector('.sidebar-header');
+
+    // Dynamically inject close button in sidebar header if missing
+    let closeBtn = document.getElementById('sidebar-close');
+    if (!closeBtn && sidebarHeader) {
+      closeBtn = document.createElement('button');
+      closeBtn.id = 'sidebar-close';
+      closeBtn.className = 'btn-sidebar-close';
+      closeBtn.setAttribute('aria-label', 'Close Navigation');
+      closeBtn.innerHTML = '<i data-lucide="x" style="width: 18px; height: 18px;"></i>';
+      sidebarHeader.appendChild(closeBtn);
+    }
     
     // Create overlay for mobile drawer
     let overlay = document.getElementById('sidebar-overlay');
@@ -25,8 +38,8 @@ const PCMC_UI = {
       overlay = document.createElement('div');
       overlay.id = 'sidebar-overlay';
       overlay.style.cssText = `
-        position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-        z-index: 850; display: none; backdrop-filter: blur(4px);
+        position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+        z-index: 990; display: none; backdrop-filter: blur(3px);
       `;
       document.body.appendChild(overlay);
     }
@@ -53,9 +66,41 @@ const PCMC_UI = {
       });
     }
 
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeSidebar);
+    }
+
     overlay.addEventListener('click', closeSidebar);
 
-    // Highlight current page link
+    // Escape key listener for sidebar & active modals
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (sidebar && sidebar.classList.contains('open')) {
+          closeSidebar();
+        }
+        const activeModal = document.querySelector('.modal-backdrop.active');
+        if (activeModal) {
+          activeModal.classList.remove('active');
+        }
+      }
+    });
+
+    // Touch swipe left on sidebar to dismiss drawer
+    let touchStartX = 0;
+    if (sidebar) {
+      sidebar.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+      }, { passive: true });
+
+      sidebar.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        if (touchStartX - touchEndX > 50) {
+          closeSidebar();
+        }
+      }, { passive: true });
+    }
+
+    // Highlight current page link and auto-close on mobile
     const currentPath = window.location.pathname.split('/').pop() || 'dashboard.html';
     document.querySelectorAll('.sidebar-link').forEach(link => {
       const href = link.getAttribute('href');
@@ -63,6 +108,24 @@ const PCMC_UI = {
         link.classList.add('active');
       } else {
         link.classList.remove('active');
+      }
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 1024) closeSidebar();
+      });
+    });
+  },
+
+  // Setup mobile scroll hints on wide tables
+  setupTableScrollHints() {
+    document.querySelectorAll('.table-responsive, .excel-grid-container').forEach(container => {
+      if (!container.previousElementSibling || !container.previousElementSibling.classList.contains('table-scroll-hint')) {
+        const hint = document.createElement('div');
+        hint.className = 'table-scroll-hint';
+        hint.innerHTML = `
+          <span><i data-lucide="arrow-left-right" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i> Swipe horizontally to view all columns</span>
+          <span style="font-size: 0.68rem; opacity: 0.7;">&larr; Scroll &rarr;</span>
+        `;
+        container.parentNode.insertBefore(hint, container);
       }
     });
   },
@@ -93,21 +156,9 @@ const PCMC_UI = {
     const container = document.getElementById('topbar-status-badge');
     if (!container) return;
 
-    const isLive = window.PCMC_SUPABASE && window.PCMC_SUPABASE.isReady();
-    if (isLive) {
-      container.innerHTML = `
-        <span class="badge badge-completed" title="Connected to Supabase PostgreSQL">
-          <i data-lucide="database" style="width: 13px; height: 13px;"></i> Live Supabase
-        </span>
-      `;
-    } else {
-      container.innerHTML = `
-        <a href="settings.html#supabase" class="badge badge-washing" title="Click to configure Supabase credentials">
-          <i data-lucide="alert-triangle" style="width: 13px; height: 13px;"></i> Demo Mode
-        </a>
-      `;
-    }
-    if (window.lucide) window.lucide.createIcons();
+    // Live Supabase green tag removed per user request
+    container.innerHTML = '';
+    container.style.display = 'none';
   },
 
   // Toast Notification System

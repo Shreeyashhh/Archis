@@ -17,66 +17,58 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: 1.5rem;
+      padding: 1.25rem;
+      background: var(--bg-deep);
     }
     .login-container {
       width: 100%;
-      max-width: 420px;
+      max-width: 400px;
     }
     .login-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-lg);
-      padding: 2.25rem;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 240, 255, 0.08);
-      position: relative;
-      overflow: hidden;
-    }
-    .login-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+      padding: 2rem;
+      box-shadow: var(--shadow-lg);
     }
     .login-brand {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 1.75rem;
     }
     .login-logo {
-      width: 58px;
-      height: 58px;
-      margin-bottom: 0.75rem;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 0.65rem;
+      border-radius: var(--radius-md);
     }
     .login-title {
-      font-size: 1.35rem;
-      font-weight: 800;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
     }
     .login-subtitle {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: var(--text-secondary);
-      margin-top: 0.25rem;
+      margin-top: 0.2rem;
     }
     .alert-box {
-      padding: 0.75rem 1rem;
+      padding: 0.65rem 0.85rem;
       border-radius: var(--radius-md);
-      font-size: 0.85rem;
-      margin-bottom: 1.25rem;
+      font-size: 0.82rem;
+      margin-bottom: 1.15rem;
       display: none;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.5rem;
     }
     .alert-error {
-      background: rgba(255, 42, 95, 0.12);
-      border: 1px solid rgba(255, 42, 95, 0.3);
-      color: #ff527b;
+      background: var(--accent-danger-subtle);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
     }
     .alert-info {
-      background: rgba(0, 240, 255, 0.1);
-      border: 1px solid rgba(0, 240, 255, 0.25);
-      color: var(--accent-cyan);
+      background: var(--accent-primary-subtle);
+      border: 1px solid var(--accent-primary-border);
+      color: #60a5fa;
     }
     .input-with-icon {
       position: relative;
@@ -115,15 +107,37 @@
     .login-footer-links a:hover {
       color: var(--accent-cyan);
     }
-    .demo-access-box {
-      margin-top: 1.5rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--border-color);
-      text-align: center;
+    @media (max-width: 480px) {
+      body {
+        padding: 0.75rem;
+      }
+      .login-container {
+        max-width: 100%;
+      }
+      .login-card {
+        padding: 1.35rem 1.15rem;
+        border-radius: var(--radius-md);
+      }
+      .login-brand {
+        margin-bottom: 1.25rem;
+      }
+      .login-title {
+        font-size: 1.1rem;
+      }
+      .login-logo {
+        width: 42px;
+        height: 42px;
+      }
+      .login-footer-links {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+        margin-top: 1.35rem;
+      }
     }
   </style>
 </head>
-<body>
+<body class="login-page">
 
   <div class="login-container">
     <div class="login-card">
@@ -136,11 +150,6 @@
       <div id="login-alert" class="alert-box alert-error">
         <i data-lucide="alert-circle" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
         <span id="login-alert-text">Invalid login credentials.</span>
-      </div>
-
-      <div id="setup-hint" class="alert-box alert-info">
-        <i data-lucide="info" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
-        <span>Supabase not connected. You can explore the portal using <strong>Preview Demo Mode</strong> or connect your project.</span>
       </div>
 
       <form id="admin-login-form" novalidate>
@@ -168,15 +177,8 @@
         </button>
       </form>
 
-      <div class="demo-access-box">
-        <button type="button" class="btn btn-secondary btn-sm" id="btn-demo-mode" style="width: 100%;">
-          <i data-lucide="sparkles"></i> Explore Demo Mode (Offline Preview)
-        </button>
-      </div>
-
-      <div class="login-footer-links">
+      <div class="login-footer-links" style="justify-content: center;">
         <a href="../index.html"><i data-lucide="arrow-left" style="width: 14px; height: 14px; vertical-align: middle;"></i> Return to Website</a>
-        <a href="settings.html#supabase"><i data-lucide="settings" style="width: 14px; height: 14px; vertical-align: middle;"></i> Supabase Setup</a>
       </div>
     </div>
   </div>
@@ -192,16 +194,8 @@
       const pwdInput = document.getElementById('login-password');
       const alertBox = document.getElementById('login-alert');
       const alertText = document.getElementById('login-alert-text');
-      const setupHint = document.getElementById('setup-hint');
       const submitBtn = document.getElementById('btn-login');
-      const demoBtn = document.getElementById('btn-demo-mode');
       const togglePwdBtn = document.getElementById('btn-toggle-pwd');
-
-      // Check if Supabase is connected
-      const isConfigured = window.PCMC_SUPABASE && window.PCMC_SUPABASE.isReady();
-      if (!isConfigured) {
-        setupHint.style.display = 'flex';
-      }
 
       // Check URL error parameter
       const urlParams = new URLSearchParams(window.location.search);
@@ -238,8 +232,9 @@
           return;
         }
 
-        if (!isConfigured) {
-          showAlert('Supabase is not configured yet. Click "Explore Demo Mode" below to preview, or configure your Supabase URL in Setup.');
+        const currentlyConfigured = window.PCMC_SUPABASE && window.PCMC_SUPABASE.isReady();
+        if (!currentlyConfigured) {
+          showAlert('Supabase connection is not configured yet. Please verify your Supabase settings.');
           return;
         }
 
@@ -248,7 +243,12 @@
         lucide.createIcons();
 
         try {
-          await window.PCMC_AUTH.login(email, password);
+          const authHandler = window.PCMC_AUTH || (typeof PCMC_AUTH !== 'undefined' ? PCMC_AUTH : null);
+          if (!authHandler || typeof authHandler.login !== 'function') {
+            throw new Error('Authentication module failed to load. Please refresh the page and try again.');
+          }
+
+          await authHandler.login(email, password);
           const redirect = urlParams.get('redirect') || 'dashboard.html';
           window.location.href = redirect;
         } catch (err) {
@@ -257,11 +257,6 @@
           submitBtn.innerHTML = '<i data-lucide="log-in"></i> Sign In to ERP';
           lucide.createIcons();
         }
-      });
-
-      // Demo Mode button
-      demoBtn.addEventListener('click', () => {
-        window.location.href = 'dashboard.html';
       });
     });
   </script>

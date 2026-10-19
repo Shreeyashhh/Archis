@@ -76,9 +76,10 @@ const PCMC_AUTH = {
       throw new Error('Supabase is not configured yet. Please configure your Supabase Project URL and Anon Key in Settings.');
     }
 
+    const cleanEmail = (email || '').trim().toLowerCase();
     const client = window.PCMC_SUPABASE.client;
     const { data, error } = await client.auth.signInWithPassword({
-      email: email.trim(),
+      email: cleanEmail,
       password: password
     });
 
@@ -96,7 +97,7 @@ const PCMC_AUTH = {
 
     if (adminErr || !adminRecord) {
       await client.auth.signOut();
-      throw new Error('Access Denied: This account is not registered in authorized administrators list.');
+      throw new Error(`Access Denied: "${cleanEmail}" is authenticated, but not yet added to authorized administrators. Please run in Supabase SQL Editor: SELECT public.register_initial_admin('${cleanEmail}', 'Business Owner');`);
     }
 
     return { user: data.user, admin: adminRecord };
@@ -115,21 +116,23 @@ const PCMC_AUTH = {
     window.location.href = 'login.html';
   },
 
-  // Render top banner when in demo/preview mode
+  // Render clean non-intrusive notice when in demo/preview mode
   renderDemoBanner() {
     if (document.getElementById('demo-mode-banner')) return;
+    const contentArea = document.querySelector('.admin-content');
+    if (!contentArea) return;
+
     const banner = document.createElement('div');
     banner.id = 'demo-mode-banner';
-    banner.className = 'demo-banner';
+    banner.className = 'demo-inline-notice';
     banner.innerHTML = `
-      <div class="demo-banner-content">
-        <span class="demo-badge"><i data-lucide="info"></i> PREVIEW MODE</span>
-        <span>Using offline sample data. Connect your Supabase project in <a href="settings.html" style="text-decoration: underline; font-weight: 700; color: #fff;">Settings</a> to activate live database & secure RLS authentication.</span>
+      <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+        <span class="badge badge-washing" style="font-weight: 700;"><i data-lucide="info" style="width: 12px; height: 12px;"></i> PREVIEW MODE</span>
+        <span style="font-size: 0.82rem; color: var(--text-secondary);">Running with sample operational records. Connect your Supabase project in <a href="settings.html#supabase" style="color: var(--accent-primary); font-weight: 600; text-decoration: underline;">Settings</a> to activate live PostgreSQL data.</span>
       </div>
       <a href="settings.html#supabase" class="btn btn-xs btn-primary">Connect Supabase</a>
     `;
-    document.body.prepend(banner);
-    document.body.classList.add('has-demo-banner');
+    contentArea.prepend(banner);
     if (window.lucide) window.lucide.createIcons();
   },
 
@@ -146,3 +149,6 @@ const PCMC_AUTH = {
     }
   }
 };
+
+// Explicitly bind to global window
+window.PCMC_AUTH = PCMC_AUTH;

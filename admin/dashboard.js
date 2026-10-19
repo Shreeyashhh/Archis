@@ -122,26 +122,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         labels: labels.length ? labels : ['No Data'],
         datasets: [
           {
-            label: 'Daily Revenue (₹)',
+            label: 'Daily Revenue',
             data: revenueData.length ? revenueData : [0],
-            borderColor: '#00f0ff',
-            backgroundColor: 'rgba(0, 240, 255, 0.1)',
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.08)',
             fill: true,
-            tension: 0.35,
+            tension: 0.3,
             borderWidth: 2,
-            pointBackgroundColor: '#00f0ff',
-            pointRadius: 4
+            pointBackgroundColor: '#3b82f6',
+            pointBorderColor: '#0e121d',
+            pointBorderWidth: 1.5,
+            pointRadius: 4,
+            pointHoverRadius: 6
           },
           {
-            label: 'Operating Expenses (₹)',
+            label: 'Operating Expenses',
             data: expenseData.length ? expenseData : [0],
-            borderColor: '#ff2a5f',
-            backgroundColor: 'rgba(255, 42, 95, 0.1)',
+            borderColor: '#f43f5e',
+            backgroundColor: 'rgba(244, 63, 94, 0.06)',
             fill: true,
-            tension: 0.35,
+            tension: 0.3,
             borderWidth: 2,
-            pointBackgroundColor: '#ff2a5f',
-            pointRadius: 4
+            pointBackgroundColor: '#f43f5e',
+            pointBorderColor: '#0e121d',
+            pointBorderWidth: 1.5,
+            pointRadius: 4,
+            pointHoverRadius: 6
           }
         ]
       },
@@ -151,15 +157,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         plugins: {
           legend: {
             position: 'top',
-            labels: { color: '#94a3b8', font: { family: 'Outfit', size: 12 } }
+            labels: { color: '#94a3b8', font: { size: 12, weight: '500' }, boxWidth: 12 }
           },
           tooltip: {
-            backgroundColor: '#0a0d16',
+            backgroundColor: '#121726',
             titleColor: '#fff',
-            bodyColor: '#94a3b8',
-            borderColor: 'rgba(255,255,255,0.1)',
+            bodyColor: '#cbd5e1',
+            borderColor: '#242f47',
             borderWidth: 1,
             padding: 10,
+            cornerRadius: 6,
             callbacks: {
               label: (item) => ` ${item.dataset.label}: ₹${item.raw.toLocaleString('en-IN')}`
             }
@@ -167,15 +174,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         },
         scales: {
           x: {
-            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-            ticks: { color: '#64748b', font: { family: 'Outfit', size: 11 } }
-          },
-          y: {
-            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            grid: { color: 'rgba(255, 255, 255, 0.04)' },
             ticks: {
               color: '#64748b',
-              font: { family: 'Outfit', size: 11 },
-              callback: (val) => '₹' + val
+              font: { size: 11 },
+              maxTicksLimit: window.innerWidth < 768 ? 6 : 12,
+              maxRotation: 0
+            }
+          },
+          y: {
+            grid: { color: 'rgba(255, 255, 255, 0.04)' },
+            ticks: {
+              color: '#64748b',
+              font: { size: 11 },
+              callback: (val) => val >= 1000 ? '₹' + (val / 1000).toLocaleString('en-IN') + 'k' : '₹' + val
             }
           }
         }
@@ -205,10 +217,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         datasets: [{
           data: hasData ? dataValues : [1],
           backgroundColor: hasData
-            ? ['#00f0ff', '#0a84ff', '#f59e0b', '#10b981', '#8b5cf6']
+            ? ['#3b82f6', '#0ea5e9', '#10b981', '#f59e0b', '#8b5cf6']
             : ['#1e293b'],
           borderWidth: 2,
-          borderColor: '#0a0d16'
+          borderColor: '#121726'
         }]
       },
       options: {
@@ -217,15 +229,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         plugins: {
           legend: {
             position: 'bottom',
-            labels: { color: '#94a3b8', font: { family: 'Outfit', size: 11 } }
+            labels: { color: '#94a3b8', font: { size: 11 }, boxWidth: 12, padding: 12 }
           },
           tooltip: {
+            backgroundColor: '#121726',
+            borderColor: '#242f47',
+            borderWidth: 1,
+            cornerRadius: 6,
             callbacks: {
               label: (item) => hasData ? ` ₹${item.raw.toLocaleString('en-IN')}` : ' No Data'
             }
           }
         },
-        cutout: '70%'
+        cutout: '65%'
       }
     });
   }
@@ -250,10 +266,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       data: {
         labels: labels.length ? labels : ['No Data'],
         datasets: [{
-          label: 'Revenue (₹)',
+          label: 'Revenue',
           data: values.length ? values : [0],
-          backgroundColor: 'rgba(0, 240, 255, 0.65)',
-          borderColor: '#00f0ff',
+          backgroundColor: 'rgba(59, 130, 246, 0.85)',
+          borderColor: '#3b82f6',
           borderWidth: 1,
           borderRadius: 4
         }]
@@ -265,6 +281,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         plugins: {
           legend: { display: false },
           tooltip: {
+            backgroundColor: '#121726',
+            borderColor: '#242f47',
+            borderWidth: 1,
+            cornerRadius: 6,
             callbacks: {
               label: (item) => ` Revenue: ₹${item.raw.toLocaleString('en-IN')}`
             }
@@ -272,15 +292,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         },
         scales: {
           x: {
-            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            grid: { color: 'rgba(255, 255, 255, 0.04)' },
             ticks: {
               color: '#64748b',
-              callback: (v) => '₹' + v
+              callback: (v) => v >= 1000 ? '₹' + (v / 1000).toLocaleString('en-IN') + 'k' : '₹' + v
             }
           },
           y: {
             grid: { display: false },
-            ticks: { color: '#94a3b8', font: { size: 11 } }
+            ticks: {
+              color: '#94a3b8',
+              font: { size: 11 },
+              callback: function(val) {
+                const label = this.getLabelForValue(val);
+                if (window.innerWidth < 640 && label.length > 16) {
+                  return label.substring(0, 14) + '...';
+                }
+                return label;
+              }
+            }
           }
         }
       }
@@ -303,7 +333,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const statusClass = 'badge-' + (ord.order_status || 'new').toLowerCase().replace(' ', '-');
       return `
         <tr>
-          <td><strong style="font-family: monospace; color: var(--accent-cyan);">${ord.booking_id || '-'}</strong></td>
+          <td><strong style="font-family: monospace; color: var(--accent-primary);">${ord.booking_id || '-'}</strong></td>
           <td>
             <div style="font-weight: 600;">${ord.customer_name}</div>
             <div style="font-size: 0.75rem; color: var(--text-muted);">${ord.customer_mobile}</div>
@@ -330,7 +360,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <td>${PCMC_UI.formatDisplayDate(exp.expense_date)}</td>
         <td><span class="badge" style="background: rgba(255,255,255,0.06); color: var(--text-secondary);">${exp.category}</span></td>
         <td>${exp.description}</td>
-        <td style="font-weight: 700; color: var(--accent-red);">${PCMC_UI.formatINR(exp.amount)}</td>
+        <td style="font-weight: 700; color: var(--accent-danger);">${PCMC_UI.formatINR(exp.amount)}</td>
         <td>${exp.payment_method || 'Cash'}</td>
       </tr>
     `).join('');

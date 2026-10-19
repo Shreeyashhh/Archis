@@ -27,6 +27,9 @@
             <span class="brand-badge">Washing Centre</span>
           </div>
         </a>
+        <button class="btn-sidebar-close" id="sidebar-close" aria-label="Close Navigation">
+          <i data-lucide="x"></i>
+        </button>
       </div>
 
       <nav class="sidebar-nav">
@@ -55,8 +58,8 @@
           <span>Reports & Analytics</span>
         </a>
         <a href="import-export.html" class="sidebar-link">
-          <i data-lucide="file-spreadsheet"></i>
-          <span>Excel Import & Export</span>
+          <i data-lucide="download"></i>
+          <span>Excel Data Export</span>
         </a>
 
         <div class="nav-section-title">Administration</div>
@@ -139,9 +142,9 @@
         </div>
 
         <!-- 1. TODAY'S REAL-TIME SUMMARY METRICS -->
-        <div style="margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+        <div style="margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
           <h2 style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); font-weight: 700;">
-            <i data-lucide="clock" style="width: 15px; height: 15px; display: inline-block; vertical-align: middle; color: var(--accent-cyan);"></i>
+            <i data-lucide="clock" style="width: 15px; height: 15px; display: inline-block; vertical-align: middle; color: var(--accent-primary);"></i>
             Today's Snapshot (<span id="todayDateLabel">Today</span>)
           </h2>
           <span style="font-size: 0.75rem; color: var(--text-muted);">Auto-calculated from today's entries</span>
@@ -183,30 +186,12 @@
             <div class="kpi-value" id="kpi-today-vehicles">0</div>
             <div class="kpi-subtext">Total vehicles washed today</div>
           </div>
-
-          <div class="kpi-card blue">
-            <div class="kpi-header">
-              <span class="kpi-label">Pending Pickup Orders</span>
-              <div class="kpi-icon-box"><i data-lucide="package"></i></div>
-            </div>
-            <div class="kpi-value" id="kpi-pending-orders">0</div>
-            <div class="kpi-subtext">Requires pickup / washing / delivery</div>
-          </div>
-
-          <div class="kpi-card purple">
-            <div class="kpi-header">
-              <span class="kpi-label">Total Capital Invested</span>
-              <div class="kpi-icon-box"><i data-lucide="layers"></i></div>
-            </div>
-            <div class="kpi-value" id="kpi-total-capital">₹0</div>
-            <div class="kpi-subtext">Owner equity & machinery assets</div>
-          </div>
         </div>
 
         <!-- 2. SELECTED PERIOD TOTALS (e.g. This Month / Custom Range) -->
-        <div style="margin: 1.5rem 0 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+        <div style="margin: 1.5rem 0 0.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
           <h2 style="font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); font-weight: 700;">
-            <i data-lucide="activity" style="width: 15px; height: 15px; display: inline-block; vertical-align: middle; color: var(--accent-cyan);"></i>
+            <i data-lucide="activity" style="width: 15px; height: 15px; display: inline-block; vertical-align: middle; color: var(--accent-primary);"></i>
             Selected Range Performance Summary
           </h2>
         </div>
@@ -246,6 +231,27 @@
             </div>
             <div class="kpi-value" id="kpi-range-vehicles">0</div>
             <div class="kpi-subtext">Total washes in range</div>
+          </div>
+        </div>
+
+        <!-- 3. OPERATIONAL PIPELINE & CAPITAL ASSETS -->
+        <div class="dashboard-grid-equal" style="margin-bottom: 1.5rem;">
+          <div class="kpi-card blue">
+            <div class="kpi-header">
+              <span class="kpi-label">Pending Pickup Orders</span>
+              <div class="kpi-icon-box"><i data-lucide="package"></i></div>
+            </div>
+            <div class="kpi-value" id="kpi-pending-orders">0</div>
+            <div class="kpi-subtext">Doorstep bookings requiring pickup, wash, or delivery</div>
+          </div>
+
+          <div class="kpi-card purple">
+            <div class="kpi-header">
+              <span class="kpi-label">Total Capital Invested</span>
+              <div class="kpi-icon-box"><i data-lucide="layers"></i></div>
+            </div>
+            <div class="kpi-value" id="kpi-total-capital">₹0</div>
+            <div class="kpi-subtext">Owner equity & machinery/equipment assets</div>
           </div>
         </div>
 

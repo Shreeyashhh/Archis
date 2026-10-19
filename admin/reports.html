@@ -10,38 +10,66 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <link rel="stylesheet" href="admin.css">
   <style>
-    .statement-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
+    .progress-bar-bg {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-full);
+      height: 6px;
+      overflow: hidden;
+      margin-top: 4px;
     }
-    .statement-table td {
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--border-color);
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.4s ease;
     }
-    .statement-table tr.header-row td {
-      background: rgba(255, 255, 255, 0.04);
+    .insight-callout {
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: var(--radius-md);
+      padding: 1.15rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+    }
+    .math-formula-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .math-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .math-val {
+      font-size: 1.4rem;
       font-weight: 700;
-      color: var(--accent-cyan);
-      text-transform: uppercase;
-      font-size: 0.8rem;
-      letter-spacing: 0.05em;
+      font-variant-numeric: tabular-nums;
     }
-    .statement-table tr.total-row td {
-      background: rgba(0, 240, 255, 0.06);
+    .math-op {
+      font-size: 1.5rem;
       font-weight: 800;
-      font-size: 1.05rem;
-      border-top: 2px solid rgba(0, 240, 255, 0.3);
+      color: var(--text-muted);
     }
-    .statement-table tr.profit-row td {
-      background: rgba(16, 185, 129, 0.08);
-      font-weight: 800;
-      font-size: 1.15rem;
-      color: var(--accent-green);
-      border-top: 2px solid rgba(16, 185, 129, 0.3);
+    @media (max-width: 600px) {
+      .math-formula-box {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .math-op {
+        text-align: center;
+        margin: -0.25rem 0;
+      }
     }
   </style>
 </head>
@@ -59,6 +87,9 @@
             <span class="brand-badge">Washing Centre</span>
           </div>
         </a>
+        <button class="btn-sidebar-close" id="sidebar-close" aria-label="Close Navigation">
+          <i data-lucide="x"></i>
+        </button>
       </div>
 
       <nav class="sidebar-nav">
@@ -87,8 +118,8 @@
           <span>Reports & Analytics</span>
         </a>
         <a href="import-export.html" class="sidebar-link">
-          <i data-lucide="file-spreadsheet"></i>
-          <span>Excel Import & Export</span>
+          <i data-lucide="download"></i>
+          <span>Excel Data Export</span>
         </a>
 
         <div class="nav-section-title">Administration</div>
@@ -126,15 +157,15 @@
             <i data-lucide="menu"></i>
           </button>
           <div>
-            <h1 class="topbar-title">Financial Reports & Statements</h1>
-            <p class="topbar-subtitle">Audit-grade P&L statements, category margins, and multi-sheet Excel export</p>
+            <h1 class="topbar-title">Financial Reports & Analytics</h1>
+            <p class="topbar-subtitle">Clear profit & loss breakdown, vehicle revenue trends, and operational insights</p>
           </div>
         </div>
 
         <div class="topbar-actions">
           <div id="topbar-status-badge"></div>
           <button class="btn btn-primary btn-sm" id="btnExportFullReport">
-            <i data-lucide="file-spreadsheet"></i> Download Complete Excel P&L
+            <i data-lucide="download"></i> Download Full Excel P&L
           </button>
         </div>
       </header>
@@ -145,11 +176,11 @@
         <!-- Filter Controls -->
         <div class="filter-bar">
           <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <i data-lucide="calendar" style="width: 16px; height: 16px; color: var(--accent-cyan);"></i>
-            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">Statement Period:</span>
+            <i data-lucide="calendar" style="width: 16px; height: 16px; color: var(--accent-primary);"></i>
+            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">Select Analytics Period:</span>
           </div>
 
-          <select id="reportPeriodSelect" class="form-select" style="min-width: 160px;">
+          <select id="reportPeriodSelect" class="form-select" style="min-width: 170px;">
             <option value="thisMonth" selected>This Month</option>
             <option value="prevMonth">Previous Month</option>
             <option value="last7">Last 7 Days</option>
@@ -159,157 +190,223 @@
             <option value="custom">Custom Date Range</option>
           </select>
 
+          <!-- Custom range box: hidden by default, visible only when user clicks custom range -->
           <div id="reportCustomBox" style="display: none; align-items: center; gap: 0.5rem;">
             <input type="date" id="reportCustomStart" class="form-control" style="padding: 0.45rem 0.6rem;">
             <span style="color: var(--text-muted); font-size: 0.8rem;">to</span>
             <input type="date" id="reportCustomEnd" class="form-control" style="padding: 0.45rem 0.6rem;">
-            <button id="btnApplyReportCustom" class="btn btn-secondary btn-sm">Generate</button>
+            <button id="btnApplyReportCustom" class="btn btn-secondary btn-sm">Apply Range</button>
           </div>
 
           <div style="margin-left: auto; font-size: 0.82rem; color: var(--text-muted);" id="reportDateLabel">
-            Period: Loading...
+            Period: Calculating...
           </div>
         </div>
 
-        <!-- 1. EXECUTIVE P&L STATEMENT -->
-        <div class="panel-card" style="margin-bottom: 1.75rem;">
+        <!-- 1. FOUR BIG INSTANT BUSINESS HEALTH SCORECARDS -->
+        <div class="kpi-grid">
+          
+          <!-- Gross Revenue -->
+          <div class="kpi-card cyan">
+            <div class="kpi-header">
+              <span class="kpi-label">Gross Wash Revenue</span>
+              <div class="kpi-icon-box"><i data-lucide="wallet"></i></div>
+            </div>
+            <div class="kpi-value" id="kpi-report-revenue">₹0</div>
+            <div class="kpi-subtext" id="kpi-report-revenue-sub">From 0 vehicle washes</div>
+          </div>
+
+          <!-- Total Operating Expenses -->
+          <div class="kpi-card red">
+            <div class="kpi-header">
+              <span class="kpi-label">Operating Expenses</span>
+              <div class="kpi-icon-box"><i data-lucide="trending-down"></i></div>
+            </div>
+            <div class="kpi-value" id="kpi-report-expenses">₹0</div>
+            <div class="kpi-subtext" id="kpi-report-expenses-sub">Electricity, wages, chemicals</div>
+          </div>
+
+          <!-- Net Operating Profit -->
+          <div class="kpi-card green" id="kpi-profit-card">
+            <div class="kpi-header">
+              <span class="kpi-label">Net Operating Profit</span>
+              <div class="kpi-icon-box"><i data-lucide="shield-check"></i></div>
+            </div>
+            <div class="kpi-value" id="kpi-report-profit">₹0</div>
+            <div class="kpi-subtext" id="kpi-report-profit-sub">Revenue minus operating expenses</div>
+          </div>
+
+          <!-- Operating Profit Margin -->
+          <div class="kpi-card yellow">
+            <div class="kpi-header">
+              <span class="kpi-label">Profit Margin %</span>
+              <div class="kpi-icon-box"><i data-lucide="percent"></i></div>
+            </div>
+            <div class="kpi-value" id="kpi-report-margin">0%</div>
+            <div class="kpi-subtext" id="kpi-report-margin-sub">Portion of revenue kept as profit</div>
+          </div>
+
+        </div>
+
+        <!-- 2. PLAIN ENGLISH BUSINESS SUMMARY BANNER -->
+        <div class="insight-callout" id="reportExecutiveSummaryBox">
+          <div style="width: 34px; height: 34px; border-radius: var(--radius-sm); background: var(--accent-primary-subtle); color: var(--accent-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">
+            <i data-lucide="lightbulb" style="width: 18px; height: 18px;"></i>
+          </div>
+          <div style="flex: 1;">
+            <div style="font-weight: 700; font-size: 0.92rem; color: #fff; margin-bottom: 0.25rem;">
+              Executive Performance Summary (<span id="summaryPeriodName">This Month</span>)
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6;" id="reportExecutiveSummaryText">
+              Analyzing operational entries and financial inflows...
+            </p>
+          </div>
+        </div>
+
+        <!-- 3. VISUAL ANALYTICS CHARTS (MONEY IN VS OUT & VEHICLE SHARE) -->
+        <div class="dashboard-grid-equal" style="margin-bottom: 1.5rem;">
+          
+          <!-- Bar Chart: Revenue vs Expenses vs Net Profit -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div class="panel-title">
+                <i data-lucide="bar-chart-2" style="color: var(--accent-primary);"></i>
+                Financial Balance: Inflows vs Outflows
+              </div>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Collections vs Operating Costs</span>
+            </div>
+            <div style="position: relative; height: 260px; width: 100%;">
+              <canvas id="financialComparisonChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Donut Chart: Revenue by Vehicle Category -->
+          <div class="panel-card">
+            <div class="panel-header">
+              <div class="panel-title">
+                <i data-lucide="pie-chart" style="color: var(--accent-primary);"></i>
+                Revenue Share by Vehicle Type
+              </div>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Category percentage distribution</span>
+            </div>
+            <div style="position: relative; height: 260px; width: 100%;">
+              <canvas id="categoryDonutChart"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 4. SIMPLE MATH & CASHFLOW OVERVIEW CARD -->
+        <div class="panel-card" style="margin-bottom: 1.5rem;">
           <div class="panel-header">
             <div class="panel-title">
-              <i data-lucide="file-text" style="color: var(--accent-cyan);"></i>
-              PCMC Washing Centre — Operating Profit & Loss Statement
+              <i data-lucide="calculator" style="color: var(--accent-success);"></i>
+              Net Operating Profit Formula (Simple & Transparent)
             </div>
-            <span id="reportPrintDate" style="font-size: 0.78rem; color: var(--text-muted);"></span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Pure Day-to-Day Operating Cash Flow</span>
           </div>
 
-          <div class="table-responsive">
-            <table class="statement-table">
-              <tbody>
-                <!-- Revenue Header -->
-                <tr class="header-row">
-                  <td colspan="2">1. Operating Revenue (Vehicle Washing Collections)</td>
-                  <td style="text-align: right; width: 180px;">Amount (₹)</td>
-                </tr>
-                <tr>
-                  <td style="padding-left: 2rem;">Motorcycle / Bike Washing Revenue</td>
-                  <td style="color: var(--text-secondary); font-size: 0.8rem;" id="stmt-bike-desc">Commuter & Sports segments</td>
-                  <td style="text-align: right; font-weight: 600;" id="stmt-bike-rev">₹0</td>
-                </tr>
-                <tr>
-                  <td style="padding-left: 2rem;">Car Washing Revenue</td>
-                  <td style="color: var(--text-secondary); font-size: 0.8rem;" id="stmt-car-desc">Water wash, foam body & full underbody wash</td>
-                  <td style="text-align: right; font-weight: 600;" id="stmt-car-rev">₹0</td>
-                </tr>
-                <tr>
-                  <td style="padding-left: 2rem;">Commercial Vehicles (Rickshaw & Tractor)</td>
-                  <td style="color: var(--text-secondary); font-size: 0.8rem;">Auto-rickshaw & agricultural tractor wash</td>
-                  <td style="text-align: right; font-weight: 600;" id="stmt-comm-rev">₹0</td>
-                </tr>
-                <tr>
-                  <td style="padding-left: 2rem;">Miscellaneous Wash & Detailing Services</td>
-                  <td style="color: var(--text-secondary); font-size: 0.8rem;">Add-on washes and custom requests</td>
-                  <td style="text-align: right; font-weight: 600;" id="stmt-misc-rev">₹0</td>
-                </tr>
-                <tr class="total-row">
-                  <td colspan="2" style="color: var(--accent-cyan);">A. GROSS OPERATING REVENUE</td>
-                  <td style="text-align: right; color: var(--accent-cyan);" id="stmt-gross-rev">₹0</td>
-                </tr>
+          <div class="math-formula-box">
+            <div class="math-item">
+              <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Gross Collections</span>
+              <span class="math-val" style="color: var(--accent-primary);" id="formulaRevenue">₹0</span>
+              <span style="font-size: 0.72rem; color: var(--text-secondary);">Total wash revenue</span>
+            </div>
 
-                <!-- Expenses Header -->
-                <tr class="header-row" style="margin-top: 1rem;">
-                  <td colspan="2">2. Operating Expenses & Direct Overheads</td>
-                  <td style="text-align: right;">Amount (₹)</td>
-                </tr>
-                <tbody id="stmt-expense-rows">
-                  <!-- Populated by JS -->
-                </tbody>
-                <tr class="total-row">
-                  <td colspan="2" style="color: var(--accent-red);">B. TOTAL OPERATING EXPENSES</td>
-                  <td style="text-align: right; color: var(--accent-red);" id="stmt-total-exp">₹0</td>
-                </tr>
+            <div class="math-op">−</div>
 
-                <!-- Operating Profit -->
-                <tr class="profit-row">
-                  <td colspan="2">C. NET OPERATING PROFIT (A − B)</td>
-                  <td style="text-align: right;" id="stmt-net-profit">₹0</td>
-                </tr>
-                <tr>
-                  <td colspan="2" style="color: var(--text-secondary); font-size: 0.82rem; padding-left: 2rem;">
-                    Operating Profit Margin Percentage
-                  </td>
-                  <td style="text-align: right; font-weight: 700; color: #fff;" id="stmt-margin-pct">0%</td>
-                </tr>
+            <div class="math-item">
+              <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Operating Expenses</span>
+              <span class="math-val" style="color: var(--accent-danger);" id="formulaExpenses">₹0</span>
+              <span style="font-size: 0.72rem; color: var(--text-secondary);">Day-to-day running costs</span>
+            </div>
 
-                <!-- Capital Section -->
-                <tr class="header-row">
-                  <td colspan="2">3. Capital Injections & Asset Additions (Recorded Separately)</td>
-                  <td style="text-align: right;">Amount (₹)</td>
-                </tr>
-                <tr>
-                  <td style="padding-left: 2rem;">Owner Capital Contributions (Equity)</td>
-                  <td style="color: var(--text-secondary); font-size: 0.8rem;">Direct funds injected by owner</td>
-                  <td style="text-align: right; font-weight: 600;" id="stmt-cap-owner">₹0</td>
-                </tr>
-                <tr>
-                  <td style="padding-left: 2rem;">Machinery, Equipment & Infrastructure Investments</td>
-                  <td style="color: var(--text-secondary); font-size: 0.8rem;">CapEx assets (not deducted as day expenses)</td>
-                  <td style="text-align: right; font-weight: 600;" id="stmt-cap-assets">₹0</td>
-                </tr>
-                <tr class="total-row">
-                  <td colspan="2" style="color: var(--accent-purple);">D. TOTAL CAPITAL ADDED</td>
-                  <td style="text-align: right; color: var(--accent-purple);" id="stmt-total-cap">₹0</td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="math-op">=</div>
+
+            <div class="math-item" style="background: rgba(16, 185, 129, 0.08); padding: 0.65rem 1rem; border-radius: var(--radius-md); border: 1px solid rgba(16, 185, 129, 0.3);">
+              <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--accent-success); font-weight: 700;">Net Operating Profit</span>
+              <span class="math-val" style="color: var(--accent-success);" id="formulaProfit">₹0</span>
+              <span style="font-size: 0.72rem; color: var(--text-secondary);" id="formulaMargin">0% Operating Margin</span>
+            </div>
           </div>
         </div>
 
-        <!-- 2. SERVICE TIER BREAKDOWN & PAYMENT MODE COLLECTIONS -->
+        <!-- 5. DETAILED EASY-TO-UNDERSTAND BREAKDOWN: REVENUE & EXPENSES -->
         <div class="dashboard-grid-equal">
-          <!-- Service Tier Breakdown -->
+          
+          <!-- REVENUE STREAMS -->
           <div class="panel-card">
             <div class="panel-header">
               <div class="panel-title">
-                <i data-lucide="pie-chart" style="color: var(--accent-cyan);"></i>
-                Category Revenue & Volume Share
+                <i data-lucide="arrow-down-left" style="color: var(--accent-primary);"></i>
+                Where Did Your Revenue Come From?
               </div>
+              <span style="font-size: 0.75rem; color: var(--text-muted);" id="revenueTotalLabel">Total: ₹0</span>
             </div>
-            <div class="table-responsive">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Category</th>
-                    <th style="text-align: right;">Revenue (₹)</th>
-                    <th style="text-align: right;">% Share</th>
-                  </tr>
-                </thead>
-                <tbody id="categoryBreakdownTbody">
-                  <!-- Populated by JS -->
-                </tbody>
-              </table>
+
+            <div id="revenueStreamsList" style="display: flex; flex-direction: column; gap: 0.95rem;">
+              <!-- Populated by JS with visual progress bars -->
             </div>
           </div>
 
-          <!-- Payment Mode Collections -->
+          <!-- OPERATING EXPENSES -->
           <div class="panel-card">
             <div class="panel-header">
               <div class="panel-title">
-                <i data-lucide="credit-card" style="color: var(--accent-green);"></i>
-                Expense Payment Mode Distribution
+                <i data-lucide="arrow-up-right" style="color: var(--accent-danger);"></i>
+                Where Did Your Money Go?
               </div>
+              <span style="font-size: 0.75rem; color: var(--text-muted);" id="expenseTotalLabel">Total: ₹0</span>
             </div>
-            <div class="table-responsive">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Payment Mode</th>
-                    <th style="text-align: right;">Amount (₹)</th>
-                    <th style="text-align: right;">% Outflow</th>
-                  </tr>
-                </thead>
-                <tbody id="paymentBreakdownTbody">
-                  <!-- Populated by JS -->
-                </tbody>
-              </table>
+
+            <div id="expenseStreamsList" style="display: flex; flex-direction: column; gap: 0.85rem;">
+              <!-- Populated by JS with visual progress bars -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 6. CAPITAL INVESTMENTS & MACHINERY ASSETS (SEPARATE FROM DAY PROFIT) -->
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <div class="panel-title">
+              <i data-lucide="layers" style="color: var(--accent-purple);"></i>
+              Capital Injections & Machinery Assets (Recorded Separately)
+            </div>
+            <span class="badge" style="background: var(--accent-purple-subtle); color: #c084fc;">CapEx Assets</span>
+          </div>
+
+          <div style="background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 1.25rem; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55;">
+            <strong style="color: #fff;"><i data-lucide="info" style="width: 14px; height: 14px; vertical-align: middle; color: var(--accent-purple);"></i> Why is this separate?</strong>
+            Machinery purchases (like high pressure pumps, foam tanks, ramps) and owner equity injections are long-term business investments (Capital Expenditures). They are not deducted from your daily washing collections so your operational profit remains accurate.
+          </div>
+
+          <div class="kpi-grid" style="margin-bottom: 0;">
+            <div class="kpi-card purple" style="margin-bottom: 0;">
+              <div class="kpi-header">
+                <span class="kpi-label">Total Capital Added</span>
+                <div class="kpi-icon-box"><i data-lucide="layers"></i></div>
+              </div>
+              <div class="kpi-value" id="stmt-total-cap">₹0</div>
+              <div class="kpi-subtext">Total investments in selected period</div>
+            </div>
+
+            <div class="kpi-card cyan" style="margin-bottom: 0;">
+              <div class="kpi-header">
+                <span class="kpi-label">Equipment & Assets</span>
+                <div class="kpi-icon-box"><i data-lucide="wrench"></i></div>
+              </div>
+              <div class="kpi-value" id="stmt-cap-assets">₹0</div>
+              <div class="kpi-subtext">Machinery, wash ramps, pressure pumps</div>
+            </div>
+
+            <div class="kpi-card green" style="margin-bottom: 0;">
+              <div class="kpi-header">
+                <span class="kpi-label">Owner Equity Contributions</span>
+                <div class="kpi-icon-box"><i data-lucide="user-check"></i></div>
+              </div>
+              <div class="kpi-value" id="stmt-cap-owner">₹0</div>
+              <div class="kpi-subtext">Direct owner capital injected</div>
             </div>
           </div>
         </div>
