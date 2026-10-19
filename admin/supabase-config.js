@@ -8,9 +8,9 @@
   const STORAGE_KEY_URL = 'pcmc_erp_supabase_url';
   const STORAGE_KEY_ANON = 'pcmc_erp_supabase_anon_key';
 
-  // Default placeholders — can be directly edited here or configured via Admin UI / Settings
-  const DEFAULT_SUPABASE_URL = 'https://your-project-ref.supabase.co';
-  const DEFAULT_SUPABASE_ANON_KEY = 'your-public-anon-key-here';
+  // Live Supabase Project Credentials
+  const DEFAULT_SUPABASE_URL = 'https://xqdvzyuypnyfrveqgxgt.supabase.co';
+  const DEFAULT_SUPABASE_ANON_KEY = 'sb_publishable_tRc1JOfsUy-1_3NAA0zTaw_vCcLcJ6i';
 
   // Read configured credentials from window, localStorage, or fallback defaults
   function getCredentials() {
